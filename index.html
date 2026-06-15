@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Irie's Cuisine · Catering Feedback</title>
+<meta name="description" content="Two-week catering feedback for Irie's Cuisine — a few quick questions to help shape the next round of meals. Takes about two minutes." />
+<meta name="theme-color" content="#0F4D3E" />
+
+<!-- Favicons (the Irie's bowl mark) -->
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png" />
+<link rel="apple-touch-icon" href="assets/iries-mark-180.png" />
+
+<!-- Social share preview -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Irie's Cuisine · A note to the kitchen" />
+<meta property="og:description" content="Tell us how the past two weeks of catering went — a few quick questions, about two minutes." />
+<meta property="og:image" content="assets/iries-logo.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --forest: #0F4D3E;
+    --forest-deep: #0a3a2e;
+    --cream: #FAF5EF;
+    --card: #fffdf9;
+    --ochre: #DDB779;
+    --bonnet: #C5542C;
+    --ink: #20312a;
+    --muted: #6b7a72;
+    --line: rgba(15, 77, 62, 0.14);
+    --shadow: 0 1px 2px rgba(15,77,62,.05), 0 12px 32px rgba(15,77,62,.06);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: "Montserrat", system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    padding: 0 20px 80px;
+  }
+
+  .wrap { max-width: 640px; margin: 0 auto; }
+
+  /* ---------- Header ---------- */
+  header { padding: 52px 0 8px; text-align: center; }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bonnet);
+    margin: 0 0 22px;
+  }
+
+  /* Brand mark (steaming bowl + IC monogram) */
+  .brandmark {
+    width: 96px;
+    height: 96px;
+    display: block;
+    margin: 0 auto 16px;
+    filter: drop-shadow(0 6px 14px rgba(15,77,62,.14));
+    animation: rise .55s ease both;
+  }
+
+  .masthead {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(40px, 10vw, 60px);
+    line-height: 0.98;
+    color: var(--forest);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .masthead .apos { color: var(--bonnet); font-style: italic; }
+  .masthead .sub {
+    display: block;
+    font-family: "Montserrat", sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-top: 14px;
+  }
+
+  .rule { width: 56px; height: 2px; background: var(--ochre); border: 0; margin: 26px auto; }
+
+  .intro {
+    text-align: center;
+    font-size: 15.5px;
+    color: var(--ink);
+    max-width: 480px;
+    margin: 0 auto 8px;
+  }
+  .intro strong { font-weight: 600; color: var(--forest); }
+  .intro .time {
+    display: block;
+    margin-top: 12px;
+    font-size: 12.5px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- Questions ---------- */
+  form { margin-top: 40px; }
+
+  .q {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px 22px 26px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .q-num {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--ochre);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .q-num .req { color: var(--bonnet); }
+
+  .q-label {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 600;
+    font-size: 23px;
+    line-height: 1.2;
+    color: var(--forest);
+    margin: 0 0 4px;
+    display: block;
+  }
+  .q-hint { font-size: 13px; color: var(--muted); margin: 0 0 18px; }
+
+  /* Rating scale */
+  .scale { display: flex; gap: 8px; }
+  .scale .opt { flex: 1; position: relative; min-width: 0; }
+  .scale input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .scale label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 52px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--forest);
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease, border-color .15s ease, transform .1s ease;
+    user-select: none;
+  }
+  .scale label:hover { border-color: var(--ochre); }
+  .scale input:checked + label {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: var(--cream);
+  }
+  .scale input:focus-visible + label { outline: 3px solid var(--ochre); outline-offset: 2px; }
+  .scale input:checked + label { transform: translateY(-1px); }
+
+  .scale-ends {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 10px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Choice rows (portion, continue) */
+  .choices { display: flex; gap: 8px; flex-wrap: wrap; }
+  .choices .opt { position: relative; flex: 1 1 0; min-width: 96px; }
+  .choices input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .choices label {
+    display: block;
+    text-align: center;
+    padding: 13px 10px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--forest);
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .choices label:hover { border-color: var(--ochre); }
+  .choices input:checked + label { background: var(--forest); border-color: var(--forest); color: var(--cream); }
+  .choices input:focus-visible + label { outline: 3px solid var(--ochre); outline-offset: 2px; }
+
+  /* Text areas + inputs */
+  textarea, input[type="text"] {
+    width: 100%;
+    font-family: "Montserrat", sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 13px 14px;
+    resize: vertical;
+    transition: border-color .15s ease;
+  }
+  textarea { min-height: 96px; line-height: 1.5; }
+  textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--forest); }
+  textarea::placeholder, input::placeholder { color: #aab4ae; }
+
+  .pair { display: flex; gap: 12px; }
+  .pair .field { flex: 1; }
+  .field-label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 7px; letter-spacing: 0.02em; }
+
+  .optional-note {
+    background: transparent;
+    border: 1px dashed var(--line);
+    box-shadow: none;
+  }
+
+  /* Submit */
+  .submit-row { margin-top: 26px; }
+  button[type="submit"] {
+    width: 100%;
+    background: var(--forest);
+    color: var(--cream);
+    border: 0;
+    border-radius: 12px;
+    padding: 18px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background .18s ease, transform .1s ease;
+  }
+  button[type="submit"]:hover { background: var(--forest-deep); }
+  button[type="submit"]:active { transform: translateY(1px); }
+  button[type="submit"]:focus-visible { outline: 3px solid var(--ochre); outline-offset: 3px; }
+  button[type="submit"][disabled] { opacity: .7; cursor: default; }
+
+  .privacy { text-align: center; font-size: 12px; color: var(--muted); margin: 16px auto 0; max-width: 440px; }
+
+  /* Hidden honeypot */
+  .hp { position: absolute; left: -9999px; }
+
+  /* ---------- Thank you ---------- */
+  #thanks { display: none; text-align: center; padding: 56px 12px 40px; }
+  #thanks.show { display: block; animation: rise .5s ease both; }
+  .thanks-mark { width: 84px; height: 84px; display: block; margin: 0 auto 18px; }
+  .thanks-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 600;
+    font-size: 34px;
+    color: var(--forest);
+    margin: 0 0 14px;
+  }
+  .thanks-body { font-size: 15.5px; color: var(--ink); max-width: 420px; margin: 0 auto; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  footer { text-align: center; margin-top: 44px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 480px) {
+    .scale label { height: 48px; font-size: 16px; }
+    .pair { flex-direction: column; gap: 0; }
+    .pair .field + .field { margin-top: 16px; }
+    .q { padding: 22px 18px 24px; }
+    .brandmark { width: 84px; height: 84px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header>
+      <p class="eyebrow">Two-week catering service · Proforest</p>
+      <img class="brandmark" src="assets/iries-mark-180.png" width="96" height="96"
+           alt="Irie's Cuisine logo — a steaming bowl with the IC monogram" />
+      <h1 class="masthead">Irie<span class="apos">'</span>s Cuisine
+        <span class="sub">A note to the kitchen</span>
+      </h1>
+      <hr class="rule" />
+      <p class="intro">
+        Thank you for eating with us these past two weeks. Before we plan what comes next,
+        we'd love to hear how it went. <strong>A few quick questions — no wrong answers.</strong>
+        <span class="time">Takes about two minutes · replies stay between you and the kitchen</span>
+      </p>
+    </header>
+
+    <main>
+    <!-- Netlify-ready form. Keep name + data-netlify for submission capture. -->
+    <form name="iries-catering-feedback" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="feedbackForm">
+      <input type="hidden" name="form-name" value="iries-catering-feedback" />
+      <p class="hp"><label>Leave blank: <input name="bot-field" /></label></p>
+
+      <!-- Q1 -->
+      <div class="q">
+        <span class="q-num">Question 1 <span class="req">· required</span></span>
+        <label class="q-label">Overall, how was the food and service?</label>
+        <p class="q-hint">Your gut feeling across the whole two weeks.</p>
+        <div class="scale" role="radiogroup" aria-label="Overall rating, 1 to 5">
+          <div class="opt"><input type="radio" id="o1" name="overall_satisfaction" value="1" required /><label for="o1">1</label></div>
+          <div class="opt"><input type="radio" id="o2" name="overall_satisfaction" value="2" /><label for="o2">2</label></div>
+          <div class="opt"><input type="radio" id="o3" name="overall_satisfaction" value="3" /><label for="o3">3</label></div>
+          <div class="opt"><input type="radio" id="o4" name="overall_satisfaction" value="4" /><label for="o4">4</label></div>
+          <div class="opt"><input type="radio" id="o5" name="overall_satisfaction" value="5" /><label for="o5">5</label></div>
+        </div>
+        <div class="scale-ends"><span>Not great</span><span>Loved it</span></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q">
+        <span class="q-num">Question 2</span>
+        <label class="q-label">How was the taste and quality?</label>
+        <p class="q-hint">Flavour, freshness, how well it was cooked.</p>
+        <div class="scale" role="radiogroup" aria-label="Taste and quality rating, 1 to 5">
+          <div class="opt"><input type="radio" id="t1" name="taste_quality" value="1" /><label for="t1">1</label></div>
+          <div class="opt"><input type="radio" id="t2" name="taste_quality" value="2" /><label for="t2">2</label></div>
+          <div class="opt"><input type="radio" id="t3" name="taste_quality" value="3" /><label for="t3">3</label></div>
+          <div class="opt"><input type="radio" id="t4" name="taste_quality" value="4" /><label for="t4">4</label></div>
+          <div class="opt"><input type="radio" id="t5" name="taste_quality" value="5" /><label for="t5">5</label></div>
+        </div>
+        <div class="scale-ends"><span>Not great</span><span>Excellent</span></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q">
+        <span class="q-num">Question 3</span>
+        <label class="q-label">How was the variety on the menu?</label>
+        <p class="q-hint">Enough range day to day to keep things interesting?</p>
+        <div class="scale" role="radiogroup" aria-label="Menu variety rating, 1 to 5">
+          <div class="opt"><input type="radio" id="v1" name="menu_variety" value="1" /><label for="v1">1</label></div>
+          <div class="opt"><input type="radio" id="v2" name="menu_variety" value="2" /><label for="v2">2</label></div>
+          <div class="opt"><input type="radio" id="v3" name="menu_variety" value="3" /><label for="v3">3</label></div>
+          <div class="opt"><input type="radio" id="v4" name="menu_variety" value="4" /><label for="v4">4</label></div>
+          <div class="opt"><input type="radio" id="v5" name="menu_variety" value="5" /><label for="v5">5</label></div>
+        </div>
+        <div class="scale-ends"><span>Too repetitive</span><span>Great range</span></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q">
+        <span class="q-num">Question 4</span>
+        <label class="q-label">Were the portions right for you?</label>
+        <div class="choices" role="radiogroup" aria-label="Portion size">
+          <div class="opt"><input type="radio" id="p1" name="portion_size" value="Too little" /><label for="p1">Too little</label></div>
+          <div class="opt"><input type="radio" id="p2" name="portion_size" value="Just right" /><label for="p2">Just right</label></div>
+          <div class="opt"><input type="radio" id="p3" name="portion_size" value="Too much" /><label for="p3">Too much</label></div>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q">
+        <span class="q-num">Question 5</span>
+        <label class="q-label">How was the delivery and the team?</label>
+        <p class="q-hint">On time, friendly, nicely presented.</p>
+        <div class="scale" role="radiogroup" aria-label="Delivery and service rating, 1 to 5">
+          <div class="opt"><input type="radio" id="s1" name="service_delivery" value="1" /><label for="s1">1</label></div>
+          <div class="opt"><input type="radio" id="s2" name="service_delivery" value="2" /><label for="s2">2</label></div>
+          <div class="opt"><input type="radio" id="s3" name="service_delivery" value="3" /><label for="s3">3</label></div>
+          <div class="opt"><input type="radio" id="s4" name="service_delivery" value="4" /><label for="s4">4</label></div>
+          <div class="opt"><input type="radio" id="s5" name="service_delivery" value="5" /><label for="s5">5</label></div>
+        </div>
+        <div class="scale-ends"><span>Needs work</span><span>Spot on</span></div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q">
+        <span class="q-num">Question 6 · optional</span>
+        <label class="q-label" for="enjoyed">What did you enjoy most?</label>
+        <textarea id="enjoyed" name="enjoyed_most" maxlength="600" placeholder="A dish, a moment, anything that stood out…"></textarea>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q">
+        <span class="q-num">Question 7 · optional</span>
+        <label class="q-label" for="suggest">Anything we could do better next time?</label>
+        <p class="q-hint">Honest suggestions help us plan what comes next.</p>
+        <textarea id="suggest" name="suggestions" maxlength="600" placeholder="What you'd change, add, or see more of…"></textarea>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q">
+        <span class="q-num">Question 8</span>
+        <label class="q-label">Would you like the service to continue?</label>
+        <div class="choices" role="radiogroup" aria-label="Continue service">
+          <div class="opt"><input type="radio" id="c1" name="continue_service" value="Yes" /><label for="c1">Yes, please</label></div>
+          <div class="opt"><input type="radio" id="c2" name="continue_service" value="Maybe" /><label for="c2">Maybe</label></div>
+          <div class="opt"><input type="radio" id="c3" name="continue_service" value="No" /><label for="c3">No</label></div>
+        </div>
+      </div>
+
+      <!-- Identity (optional) -->
+      <div class="q optional-note">
+        <span class="q-num">Optional</span>
+        <label class="q-label">Want to leave your name?</label>
+        <p class="q-hint">Totally optional — leave blank to stay anonymous.</p>
+        <div class="pair">
+          <div class="field">
+            <label class="field-label" for="nm">Name</label>
+            <input type="text" id="nm" name="name" autocomplete="name" placeholder="Your name" />
+          </div>
+          <div class="field">
+            <label class="field-label" for="tm">Team / department</label>
+            <input type="text" id="tm" name="team" autocomplete="organization" placeholder="e.g. Operations" />
+          </div>
+        </div>
+      </div>
+
+      <div class="submit-row">
+        <button type="submit">Send my feedback</button>
+        <p class="privacy">We read every response and use it to shape the next round of meals. Thank you for taking the time.</p>
+      </div>
+    </form>
+    </main>
+
+    <!-- Thank-you state -->
+    <div id="thanks" role="status" aria-live="polite">
+      <img class="thanks-mark" src="assets/iries-mark-180.png" width="84" height="84" alt="" aria-hidden="true" />
+      <h2 class="thanks-title">Medaase — thank you</h2>
+      <p class="thanks-body">
+        Your notes go straight to the kitchen. We'll use them to make the next round even better.
+        Until then — chop well.
+      </p>
+    </div>
+
+    <footer>Irie's Cuisine · Accra</footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('feedbackForm');
+    const thanks = document.getElementById('thanks');
+
+    function showThanks() {
+      form.style.display = 'none';
+      document.querySelector('header .intro').style.display = 'none';
+      thanks.classList.add('show');
+      thanks.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      const data = new FormData(form);
+      const body = new URLSearchParams(data).toString();
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body
+      })
+      .then(showThanks)
+      .catch(showThanks); // still thank the person; submission retries are rare on Netlify
+    });
+  </script>
+</body>
+</html>
