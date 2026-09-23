@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Prayer Meeting Flyer</title>
+<link href="fonts/outfit.css" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a5ce6;
+    --bg-dark: #0f2fb8;
+    --navy: #0b1e8f;
+    --sky: #1f8fff;
+    --cyan: #38c8ff;
+    --red: #f2433a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1200px; height: 1200px; font-family: 'Outfit', sans-serif; color: #fff; background: var(--bg); overflow: hidden; }
+  .flyer { position: relative; width: 1200px; height: 1200px; background: radial-gradient(circle at 50% 30%, #1570ff 0%, var(--bg) 55%, #0850d4 100%); overflow: hidden; }
+
+  /* faint background shapes, echoing the original */
+  .shape { position: absolute; border-radius: 120px; background: rgba(0, 20, 120, .12); }
+  .s1 { left: -160px; top: -120px; width: 620px; height: 620px; }
+  .s2 { right: -120px; top: -60px; width: 560px; height: 520px; }
+  .s3 { left: -200px; top: 560px; width: 420px; height: 520px; }
+
+  /* header */
+  .brand { position: absolute; top: 72px; left: 180px; display: flex; align-items: center; gap: 10px; }
+  .brand .year { font-size: 58px; font-weight: 800; letter-spacing: -2px; }
+  .brand .book { width: 38px; height: 50px; background: linear-gradient(90deg, #7fb2ff 0 45%, #2c6cff 45% 100%); border-radius: 3px; transform: skewY(-8deg); }
+  .brand .label { font-size: 27px; line-height: 1; font-weight: 400; }
+
+  .org { position: absolute; top: 80px; right: 190px; display: flex; align-items: center; gap: 12px; }
+  .org .icon { width: 48px; height: 48px; border-radius: 10px; background: #fff; display: grid; place-items: center; }
+  .org .name { font-size: 32px; font-weight: 700; letter-spacing: -.5px; }
+
+  /* theme */
+  .theme { position: absolute; top: 222px; left: 0; right: 0; text-align: center; }
+  .theme .kicker { font-size: 15px; letter-spacing: 9px; font-weight: 500; margin-bottom: -4px; }
+  .theme h1 { font-size: 132px; font-weight: 700; letter-spacing: -4px; line-height: 1; text-shadow: 0 6px 22px rgba(0,0,40,.35); }
+  .pills { display: inline-flex; margin-top: 10px; }
+  .pills span { font-size: 30px; font-weight: 500; letter-spacing: 1.5px; padding: 6px 30px; }
+  .pills span:nth-child(1) { background: var(--navy); }
+  .pills span:nth-child(2) { background: var(--sky); }
+  .pills span:nth-child(3) { background: #0d3fc4; }
+
+  /* card */
+  .card { position: absolute; left: 170px; top: 468px; width: 860px; height: 562px; background: var(--bg-dark); border-radius: 160px 36px 36px 36px; }
+  .glow { position: absolute; right: 30px; top: 40px; width: 470px; height: 470px; border-radius: 50%; background: radial-gradient(circle, rgba(140,200,255,.55) 0%, rgba(80,150,255,.25) 45%, rgba(15,47,184,0) 72%); }
+  .person { position: absolute; left: 556px; top: 440px; width: 440px; height: 590px; overflow: hidden; border-bottom-right-radius: 36px; }
+  .person img { position: absolute; left: -14px; top: 0; width: 530px; }
+
+  .info { position: absolute; right: 618px; top: 516px; text-align: right; }
+  .fee { display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+  .fee .lbl { font-size: 26px; font-weight: 600; line-height: 1.05; }
+  .fee .val { background: var(--sky); font-size: 42px; font-weight: 700; padding: 6px 16px; letter-spacing: -.5px; }
+  .note { margin-top: 14px; font-size: 20px; line-height: 1.2; }
+  .note b { display: block; color: var(--cyan); font-size: 27px; font-weight: 600; }
+
+  .verse { margin-top: 16px; font-size: 19px !important; display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px 12px 10px; border-bottom: 4px solid var(--navy); border-right: 4px solid var(--navy); font-size: 21px; font-style: italic; }
+  .verse { text-align:right; line-height:1.2; }
+  .verse .ico { width: 26px; height: 26px; border-radius: 6px; background: var(--sky); display: grid; place-items: center; font-style: normal; }
+
+  .minister { margin-top: 18px; }
+  .minister .name { font-size: 42px; font-weight: 500; line-height: 1.05; }
+  .minister .role { font-size: 23px; font-weight: 300; line-height: 1.25; margin-top: 4px; }
+
+  .tile { position: absolute; left: 428px; top: 936px; width: 128px; height: 128px; border-radius: 22px; background: linear-gradient(160deg, #ff5a4d, var(--red)); display: grid; place-items: center; box-shadow: 0 10px 22px rgba(0,0,40,.35); z-index: 3; }
+
+  /* footer */
+  .footer { position: absolute; left: 0; right: 0; bottom: 0; height: 146px; background: var(--navy); display: flex; align-items: center; justify-content: center; gap: 34px; padding-top: 10px; }
+  .item { display: flex; align-items: center; gap: 12px; }
+  .item .big { font-size: 29px; font-weight: 500; line-height: 1; }
+  .item .small { font-size: 19px; font-weight: 300; }
+  .sep { width: 2px; height: 30px; background: rgba(255,255,255,.4); }
+</style>
+</head>
+<body>
+<div class="flyer">
+  <div class="shape s1"></div><div class="shape s2"></div><div class="shape s3"></div>
+
+  <div class="brand">
+    <span class="year">2026</span><span class="book"></span>
+    <span class="label">Prayer<br>Meeting</span>
+  </div>
+
+  <div class="org">
+    <div class="icon">
+      <!-- flame -->
+      <svg width="30" height="30" viewBox="0 0 24 24"><path fill="#f2433a" d="M12 2c1 3.2-1.8 5-2.8 7.4C8.2 11.8 9 14 10.5 14.6 9.3 12 12 10.5 12.6 8c2.7 2.3 4.4 5 4.4 8a5 5 0 0 1-10 0c0-1.4.4-2.6 1-3.6C4.9 13.5 4 15.6 4 17.5A8 8 0 0 0 20 17c0-5.6-4.4-9.4-8-15z"/></svg>
+    </div>
+    <span class="name">All Are Welcome</span>
+  </div>
+
+  <div class="theme">
+    <div class="kicker">THEME:</div>
+    <h1>Revival</h1>
+    <div class="pills"><span>Worship</span><span>Prayer</span><span>Word</span></div>
+  </div>
+
+  <div class="card"></div>
+  <div class="glow" style="left:580px; top:500px; right:auto;"></div>
+  <div class="person"><img src="person.png" alt=""></div>
+
+  <div class="info">
+    <div class="fee"><div class="lbl">Entry<br>Is</div><div class="val">FREE</div></div>
+    <div class="note">Come and pray with us<b>Bring a Friend</b></div>
+    <div class="verse"><span class="ico">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#fff" d="M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6V3zm5 3v3H8v2h3v6h2v-6h3V9h-3V6h-2z"/></svg>
+    </span>“Pray without ceasing”<br>1 Thess. 5:17</div>
+    <div class="minister">
+      <div class="name">Guest<br>Minister</div>
+      <div class="role">Ministering in<br>the Word &amp; Prayer</div>
+    </div>
+  </div>
+
+  <div class="tile">
+    <!-- praying hands -->
+    <svg width="78" height="78" viewBox="0 0 64 64" fill="#fff">
+      <path d="M30 6c-1.8 0-3 1.4-3 3.2v17.5l-8.3 11.6a6 6 0 0 0-1.1 3.5V50L11 56.6 15.4 61l8.4-8.4c1.2-1.2 1.9-2.8 1.9-4.5V44l4.3-5.6V9.2C30 7.4 30.9 6 30 6z"/>
+      <path d="M34 6c1.8 0 3 1.4 3 3.2v17.5l8.3 11.6a6 6 0 0 1 1.1 3.5V50l6.6 6.6-4.4 4.4-8.4-8.4c-1.2-1.2-1.9-2.8-1.9-4.5V44l-4.3-5.6V9.2C34 7.4 33.1 6 34 6z"/>
+    </svg>
+  </div>
+
+  <div class="footer">
+    <div class="item">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="#fff"><path d="M7 2v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm-2 7h14v10H5V9z"/></svg>
+      <div><div class="big">7th February,</div><div class="small">2026</div></div>
+    </div>
+    <div class="sep"></div>
+    <div class="item">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3 2"/></svg>
+      <div><div class="big" style="font-weight:700">9am</div><div class="small">WAT</div></div>
+    </div>
+    <div class="sep"></div>
+    <div class="item">
+      <svg width="30" height="36" viewBox="0 0 24 28" fill="#fff"><path d="M12 0a10 10 0 0 0-10 10c0 7.5 10 18 10 18s10-10.5 10-18A10 10 0 0 0 12 0zm0 14a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/></svg>
+      <div><div class="big">Cafeone Ikenegbu,</div><div class="small">Owerri</div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
