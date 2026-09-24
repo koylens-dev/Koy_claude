@@ -15,6 +15,7 @@
 - **Acts and Paul's letters:** *The Acts of the Apostles* (for example "Apostasy in Galatia" for Galatians).
 - **Genesis to the reign of David:** *Patriarchs and Prophets* (for example "Idolatry at Sinai", "The Rejection of Saul").
 - **Solomon to the return from exile, Daniel and the prophets:** *Prophets and Kings* (for example "Captives in Babylon", "The Fiery Furnace").
+- **Giving, stewardship, generosity (2 Corinthians 8–9):** *The Acts of the Apostles*, ch. 32, "A Liberal Church". Paraphrase unless you have checked the wording.
 - **Revelation, prophecy, the end:** *The Great Controversy*.
 - **Prayer, faith, conversion, growing in Christ:** *Steps to Christ*.
 - **Character, education, integrity, work:** *Education*.
