@@ -45,6 +45,6 @@ These are built into `scripts/build_carousel.py` as `COMBOS`, with contrast alre
 
 - Galatians 1:10, "Audience of One": main Fruit, key Parchment
 - Matthew 7:24–27, "Built to Last": main Vine, key Cream
-- 2 Corinthians 9:6, "The Open Hand": main Harvest, key Cream, story Vine gold
+- 2 Corinthians 9:6, "The Open Hand": main Leaf, key Parchment, story Vine gold
 
-The next study should not use Harvest as its main combination.
+The next study should not use Leaf as its main combination.
