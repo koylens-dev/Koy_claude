@@ -928,7 +928,7 @@ as $$
         from public.refunds r where r.order_id = o.id and r.payment_id = o.paid_payment_id), '[]'::jsonb)
   )
   from public.orders o
-  where length(p_token) = 64 and o.public_token = p_token;
+  where length(p_token) = 32 and o.public_token = p_token;
 $$;
 
 -- ---------------------------------------------------------------------------

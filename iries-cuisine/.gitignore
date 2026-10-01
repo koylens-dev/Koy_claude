@@ -29,7 +29,7 @@ npm-debug.log*
 .sentryclirc
 
 # local database test cluster
-.pgtest/
+.pgtest*/
 
 # supabase cli
 supabase/.temp/

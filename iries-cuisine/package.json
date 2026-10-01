@@ -2,7 +2,7 @@
   "name": "iries-cuisine",
   "version": "1.0.0",
   "private": true,
-  "description": "Irie's Cuisine — food ordering PWA and restaurant operations platform (Adenta, Accra)",
+  "description": "Irie's Cuisine \u2014 food ordering PWA and restaurant operations platform (Adenta, Accra)",
   "engines": {
     "node": ">=20.9.0"
   },
@@ -15,11 +15,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:db": "bash scripts/test-db.sh",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs",
+    "test:e2e": "bash e2e/up.sh && node e2e/scenario.mjs; status=$?; bash e2e/down.sh; exit $status"
   },
   "dependencies": {
-    "@fontsource-variable/montserrat": "^5.3.0",
-    "@fontsource/cormorant-garamond": "^5.3.0",
     "@sentry/nextjs": "^11.2.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
@@ -27,6 +26,7 @@
     "next": "^16.3.8",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "server-only": "^0.0.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {

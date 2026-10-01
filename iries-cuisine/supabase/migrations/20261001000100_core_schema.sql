@@ -233,9 +233,9 @@ create sequence public.order_number_seq start with 1001;
 create table public.orders (
   id uuid primary key default gen_random_uuid(),
   order_number bigint not null unique default nextval('public.order_number_seq'),
-  -- unguessable token for the public tracking/receipt link (SMS links, payment links)
-  public_token text not null unique
-    default (replace(gen_random_uuid()::text, '-', '') || replace(gen_random_uuid()::text, '-', '')),
+  -- unguessable token (122 random bits) for the public tracking/receipt/payment links sent by SMS;
+  -- 32 characters keeps those SMS inside one 160-character message
+  public_token text not null unique default replace(gen_random_uuid()::text, '-', ''),
   customer_id uuid references auth.users (id) on delete set null,
   customer_name text not null check (length(customer_name) between 1 and 120),
   customer_phone text not null check (customer_phone ~ '^\+233[0-9]{9}$'),

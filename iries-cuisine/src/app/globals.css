@@ -1,0 +1,132 @@
+@import 'tailwindcss';
+
+/* =========================================================================
+   BRAND COLOURS — paste Irie's Cuisine hex codes here.
+   Everything in the app uses these tokens, so this is the only place to edit.
+   Keep text colours dark enough on --cream (WCAG AA = 4.5:1 for body text).
+   ========================================================================= */
+:root {
+  --brand: #9e3b22; /* primary: buttons, links, highlights (white text on it) */
+  --brand-strong: #7f2c17; /* primary when pressed / hovered */
+  --brand-soft: #f6e3da; /* light tint of primary for chips and banners */
+  --accent: #c9973f; /* gold accent — decorative only, never small text */
+  --ink: #241612; /* main text */
+  --muted: #6b5a50; /* secondary text */
+  --cream: #fbf6ef; /* page background */
+  --surface: #ffffff; /* cards and sheets */
+  --line: #eadfd3; /* borders and dividers */
+  --success: #2f6b4f;
+  --danger: #b42318;
+}
+
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-accent: var(--accent);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-cream: var(--cream);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+
+  --font-display: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  --font-sans: var(--font-montserrat), 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Element defaults live in the base layer so Tailwind utilities (e.g. font-sans) can override them. */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'lnum' 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  /* Visible keyboard focus everywhere */
+  :focus-visible {
+    outline: 3px solid var(--brand);
+    outline-offset: 2px;
+  }
+}
+
+/* Skeleton shimmer for loading states */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #efe6dc;
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: shimmer 1.4s infinite;
+}
+
+/* Attention pulse for new paid orders on the attendant console */
+@keyframes alarm {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(180, 35, 24, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(180, 35, 24, 0);
+  }
+}
+.alarm-pulse {
+  animation: alarm 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alarm-pulse,
+  .skeleton::after {
+    animation: none;
+  }
+}
+
+/* Safe-area padding for the bottom cart bar on notched phones */
+.pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+/* Printing: receipts on normal paper; kitchen tickets on an 80 mm thermal printer */
+@page {
+  margin: 12mm;
+}
+@page ticket {
+  size: 80mm auto;
+  margin: 3mm;
+}
+.print-ticket {
+  page: ticket;
+}
+@media print {
+  body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
