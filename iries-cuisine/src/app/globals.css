@@ -1,22 +1,31 @@
 @import 'tailwindcss';
 
 /* =========================================================================
-   BRAND COLOURS — paste Irie's Cuisine hex codes here.
+   BRAND COLOURS — taken from the Irie's Cuisine logo files (brand/source/).
    Everything in the app uses these tokens, so this is the only place to edit.
-   Keep text colours dark enough on --cream (WCAG AA = 4.5:1 for body text).
+   Text pairs are checked for WCAG AA contrast (see docs/TECHNICAL_PLAN.md).
    ========================================================================= */
 :root {
-  --brand: #9e3b22; /* primary: buttons, links, highlights (white text on it) */
-  --brand-strong: #7f2c17; /* primary when pressed / hovered */
-  --brand-soft: #f6e3da; /* light tint of primary for chips and banners */
-  --accent: #c9973f; /* gold accent — decorative only, never small text */
-  --ink: #241612; /* main text */
-  --muted: #6b5a50; /* secondary text */
-  --cream: #fbf6ef; /* page background */
+  /* Logo colours */
+  --midnight: #0c1c14; /* dark logo background — header, hero, app icon */
+  --gold: #ffd35b; /* lettering on dark — only ever on dark surfaces */
+  --forest: #1b4e22; /* lettering on light */
+  --olive: #315d04; /* bowl outline */
+  --chili: #ff0000; /* chili pepper — decoration only */
+
+  /* Roles used by the app */
+  --brand: var(--forest); /* buttons and links (white text on it: 9.7:1) */
+  --brand-strong: #123a18; /* pressed / hover */
+  --brand-soft: #e5efdd; /* light green tint for selected options */
+  --accent: var(--gold); /* gold accent — on dark surfaces only */
+  --ink: var(--midnight); /* main text (16:1 on the page) */
+  --muted: #56625a; /* secondary text (5.9:1 on the page) */
+  --cream: #fdf6e3; /* page background (a softer version of the logo cream) */
   --surface: #ffffff; /* cards and sheets */
-  --line: #eadfd3; /* borders and dividers */
-  --success: #2f6b4f;
+  --line: #ece2c4; /* borders and dividers */
+  --success: #1d7442; /* stem green */
   --danger: #b42318;
+  --chart: #1d7442; /* chart bars (validated for charts; --forest is too dark) */
 }
 
 @theme inline {
@@ -31,6 +40,11 @@
   --color-line: var(--line);
   --color-success: var(--success);
   --color-danger: var(--danger);
+  --color-midnight: var(--midnight);
+  --color-gold: var(--gold);
+  --color-forest: var(--forest);
+  --color-olive: var(--olive);
+  --color-chili: var(--chili);
 
   --font-display: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
   --font-sans: var(--font-montserrat), 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -74,7 +88,7 @@
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: #efe6dc;
+  background: #f1e8cf;
 }
 .skeleton::after {
   content: '';
@@ -83,6 +97,13 @@
   transform: translateX(-100%);
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
   animation: shimmer 1.4s infinite;
+}
+
+/* The chevron pattern from the logo backgrounds, as a lightweight repeating SVG */
+.brand-chevrons {
+  background-color: var(--midnight);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='160' viewBox='0 0 320 160'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.04' stroke-width='44' stroke-linejoin='miter'%3E%3Cpolyline points='-160,280 0,160 160,280 320,160 480,280'/%3E%3Cpolyline points='-160,120 0,0 160,120 320,0 480,120'/%3E%3Cpolyline points='-160,-40 0,-160 160,-40 320,-160 480,-40'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 320px 160px;
 }
 
 /* Attention pulse for new paid orders on the attendant console */

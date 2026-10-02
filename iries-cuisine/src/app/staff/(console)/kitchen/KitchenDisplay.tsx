@@ -7,7 +7,7 @@ import { useStaffAction } from '@/components/staff/useStaffAction'
 import { ConnectionBadge } from '@/components/staff/ConnectionBadge'
 import { keepScreenOn, playTicketBeep, releaseScreen, unlockAudio } from '@/components/staff/alerts'
 import type { OrderRow, OrderWithItems } from '@/lib/types'
-import { formatTime } from '@/lib/time'
+import { accraDateKey, formatSlot, formatTime } from '@/lib/time'
 import { cn } from '@/lib/cn'
 
 function useNow(intervalMs = 1000) {
@@ -75,7 +75,7 @@ export function KitchenDisplay() {
     <div className="px-3 pb-10 pt-3">
       <div className="mb-3 flex flex-wrap items-center gap-2">
         {!soundOn && (
-          <button type="button" onClick={async () => setSoundOn(await unlockAudio())} className="min-h-12 rounded-xl bg-orange-500 px-4 font-bold text-neutral-950">
+          <button type="button" onClick={async () => setSoundOn(await unlockAudio())} className="min-h-12 rounded-xl bg-gold px-4 font-bold text-midnight">
             Start shift (sound + screen on)
           </button>
         )}
@@ -98,7 +98,7 @@ export function KitchenDisplay() {
         <Column title="To cook" count={toCook.length}>
           {toCook.map((o) => (
             <Ticket key={o.id} order={o} now={now} since={o.accepted_at}>
-              <button type="button" disabled={action.busy === `${o.id}:in_kitchen`} onClick={() => action.change(o.id, 'in_kitchen')} className="min-h-14 flex-1 rounded-xl bg-orange-500 text-lg font-bold text-neutral-950 active:scale-[0.98] disabled:opacity-50">
+              <button type="button" disabled={action.busy === `${o.id}:in_kitchen`} onClick={() => action.change(o.id, 'in_kitchen')} className="min-h-14 flex-1 rounded-xl bg-gold text-lg font-bold text-midnight active:scale-[0.98] disabled:opacity-50">
                 Start
               </button>
               <button type="button" disabled={action.busy === `${o.id}:ready`} onClick={() => action.change(o.id, 'ready')} className="min-h-14 rounded-xl bg-white/10 px-4 font-semibold disabled:opacity-50">
@@ -164,7 +164,8 @@ function Ticket({ order, now, since, children }: { order: OrderWithItems; now: n
         <div className="text-right">
           {notYet ? (
             <p className={cn('flex items-center gap-1 text-lg font-bold', timerTone)}>
-              <Clock className="size-4" aria-hidden /> start {formatTime(new Date(scheduledStart!))}
+              <Clock className="size-4" aria-hidden /> start{' '}
+              {accraDateKey(new Date(scheduledStart!)) === accraDateKey(new Date(now)) ? formatTime(new Date(scheduledStart!)) : formatSlot(new Date(scheduledStart!), new Date(now))}
             </p>
           ) : (
             <p className={cn('font-mono text-3xl font-bold tabular-nums', timerTone)} aria-label={`Elapsed ${Math.floor(elapsed / 60000)} minutes`}>
@@ -178,7 +179,7 @@ function Ticket({ order, now, since, children }: { order: OrderWithItems; now: n
       <ul className="mt-3 space-y-2 text-lg">
         {order.order_items.map((i) => (
           <li key={i.id} className="leading-snug">
-            <span className="font-bold text-orange-300">{i.quantity}×</span> <span className="font-semibold">{i.item_name}</span>
+            <span className="font-bold text-gold">{i.quantity}×</span> <span className="font-semibold">{i.item_name}</span>
             {i.portion_name && <span className="text-white/70"> — {i.portion_name}</span>}
             {i.modifiers.length > 0 && <span className="block pl-7 text-base text-white/80">{i.modifiers.map((m) => m.option).join(' · ')}</span>}
             {i.notes && <span className="mt-0.5 block rounded bg-yellow-300 px-2 py-0.5 pl-2 text-base font-bold text-neutral-950">⚠ {i.notes}</span>}

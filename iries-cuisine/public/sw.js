@@ -5,11 +5,11 @@
  * - Public pages (menu, catering): network-first with cached fallback.
  * - Never caches private pages (staff, admin, account, checkout, tracking) or API calls.
  */
-const VERSION = 'v1'
+const VERSION = 'v2'
 const STATIC = `iries-static-${VERSION}`
 const PAGES = `iries-pages-${VERSION}`
 const IMAGES = `iries-images-${VERSION}`
-const PRECACHE = ['/offline.html', '/icons/icon-192.png', '/icons/icon-512.png', '/manifest.webmanifest']
+const PRECACHE = ['/offline.html', '/brand/logo-on-light.png', '/icons/icon-192.png', '/icons/icon-512.png', '/manifest.webmanifest']
 const PUBLIC_PAGE = /^\/($|menu\/|catering$|privacy$|terms$)/
 const MAX_IMAGES = 80
 

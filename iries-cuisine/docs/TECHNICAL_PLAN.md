@@ -10,8 +10,8 @@ Nothing in the brief blocked the build, so there are no open questions. Two plac
 
 | Topic | Assumption | Where to change it |
 |---|---|---|
-| Brand colours `[PASTE HEX CODES]` | A warm placeholder palette: jollof red `#9e3b22`, gold `#c9973f`, espresso `#241612`, cream `#fbf6ef`. Contrast is checked for WCAG AA. | One block at the top of `src/app/globals.css` |
-| Logo | A placeholder "I" monogram for the app icons | `npm run icons -- path/to/logo.png` |
+| Brand colours | **Taken from your logo files:** midnight green `#0c1c14`, gold `#ffd35b`, forest green `#1b4e22`, olive `#315d04`, chili red `#ff0000`, stem green `#1d7442`; page background `#fdf6e3` (a softer version of the logo cream for long reading). Every text/background pair passes WCAG AA. Charts use the stem green, because the forest green is too dark for chart bars. | Top of `src/app/globals.css` |
+| Logo | **Your logo**, cut out of its patterned background. Gold-on-midnight in the header, kitchen screen and share card; green-on-light in the footer, staff login and admin. The steaming bowl on midnight green is the app icon. | Replace the two files in `brand/source/` and run `npm run brand` |
 | Launch budget `[AMOUNT PER MONTH]` | Unknown. The recommended setup has a fixed cost of about **US$45 (≈ GH₵525) a month**. On top of that you pay per use for SMS and 1.95% per payment. See §2.3. | — |
 | Average order value | **GH₵120** (food plus delivery). It's used only for the cost table. | — |
 | Opening hours, delivery zones, prices | Sample values for Adenta and nearby areas (Madina, East Legon, Oyarifa, Spintex) | Admin → Hours & settings / Delivery zones / Menu |

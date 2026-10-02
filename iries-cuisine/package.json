@@ -15,8 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:db": "bash scripts/test-db.sh",
-    "icons": "node scripts/generate-icons.mjs",
-    "test:e2e": "bash e2e/up.sh && node e2e/scenario.mjs; status=$?; bash e2e/down.sh; exit $status"
+    "test:e2e": "bash e2e/up.sh && node e2e/scenario.mjs; status=$?; bash e2e/down.sh; exit $status",
+    "brand": "node scripts/brand-assets.mjs"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.2.0",

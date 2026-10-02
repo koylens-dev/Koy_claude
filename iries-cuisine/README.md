@@ -52,6 +52,7 @@ src/
   app/pay/[token]    permanent payment link → Paystack checkout
   lib/               pricing, opening hours, phone/GPS formats, SMS templates, signatures (pure, unit-tested)
   lib/server/        Paystack client, payments & refunds, SMS providers, notifications, auth helpers
+brand/source/        master logo files (dark and light); `npm run brand` builds every logo, icon and share image from them
 supabase/
   migrations/        schema, business functions (state machine, payments, refunds, reports), security (RLS)
   seed.sql           sample menu, zones and hours

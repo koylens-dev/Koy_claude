@@ -1,6 +1,8 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
+import { logoOnDark, logoOnLight } from '@/lib/brand'
 import { usePathname, useRouter } from 'next/navigation'
 import { createContext, useContext } from 'react'
 import { ClipboardList, ChefHat, PlusCircle, Ban, LayoutDashboard, LogOut } from 'lucide-react'
@@ -32,12 +34,10 @@ export function StaffShell({ role, name, children }: { role: StaffRole; name: st
 
   return (
     <StaffContext.Provider value={{ role, name }}>
-      <div className={cn('min-h-dvh', kitchen ? 'bg-neutral-950 text-white' : 'bg-cream')}>
-        <header className={cn('sticky top-0 z-30 border-b', kitchen ? 'border-white/10 bg-neutral-950' : 'border-line bg-surface')}>
+      <div className={cn('min-h-dvh', kitchen ? 'bg-midnight text-white' : 'bg-cream')}>
+        <header className={cn('sticky top-0 z-30 border-b', kitchen ? 'border-white/10 bg-midnight' : 'border-line bg-surface')}>
           <div className="flex h-14 items-center gap-2 px-3">
-            <span className="mr-2 hidden font-display text-xl font-semibold sm:block">
-              <span className={kitchen ? 'text-orange-300' : 'text-brand'}>Irie’s</span> staff
-            </span>
+            <Image src={kitchen ? logoOnDark : logoOnLight} alt="Irie's Cuisine staff" className="mr-2 hidden h-8 w-auto sm:block" sizes="96px" />
             <nav className="flex flex-1 gap-1 overflow-x-auto [scrollbar-width:none]" aria-label="Staff">
               {NAV.filter((n) => n.roles.includes(role)).map((n) => {
                 const active = pathname.startsWith(n.href)
@@ -47,7 +47,7 @@ export function StaffShell({ role, name, children }: { role: StaffRole; name: st
                     href={n.href}
                     className={cn(
                       'inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold',
-                      active ? (kitchen ? 'bg-white text-neutral-950' : 'bg-ink text-white') : kitchen ? 'text-white/80 hover:bg-white/10' : 'hover:bg-black/5',
+                      active ? (kitchen ? 'bg-gold text-midnight' : 'bg-ink text-white') : kitchen ? 'text-white/80 hover:bg-white/10' : 'hover:bg-black/5',
                     )}
                   >
                     <n.icon className="size-4" aria-hidden />

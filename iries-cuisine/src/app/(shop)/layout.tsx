@@ -1,4 +1,6 @@
+import Image from 'next/image'
 import Link from 'next/link'
+import { logoOnLight } from '@/lib/brand'
 import { CartProvider } from '@/components/customer/CartProvider'
 import { SiteHeader } from '@/components/customer/SiteHeader'
 import { CartBar } from '@/components/customer/CartBar'
@@ -12,8 +14,8 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
       <footer className="border-t border-line bg-surface/60">
         <div className="mx-auto grid max-w-6xl gap-6 px-4 py-10 text-sm text-muted sm:grid-cols-3">
           <div>
-            <p className="font-display text-2xl font-semibold text-ink">Irie’s Cuisine</p>
-            <p className="mt-1">Ghanaian home cooking · Adenta, Accra</p>
+            <Image src={logoOnLight} alt="Irie's Cuisine" className="h-14 w-auto" sizes="200px" />
+            <p className="mt-3">Ghanaian home cooking · Adenta, Accra</p>
             <p className="mt-1">Prepaid orders only — MoMo, Visa & Mastercard.</p>
           </div>
           <nav className="flex flex-col gap-2" aria-label="Footer">

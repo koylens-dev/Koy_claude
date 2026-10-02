@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { menuImageUrl } from '@/lib/public-env'
 import { cn } from '@/lib/cn'
 
-const PALETTE = ['#9e3b22', '#2f6b4f', '#c9973f', '#7f2c17', '#5b4636']
+const PALETTE = ['#1b4e22', '#315d04', '#1d7442', '#0c1c14', '#2c5a35']
 
 /** Dish photo, or a warm branded placeholder until the owner uploads one. */
 export function ItemArt({
@@ -37,10 +37,10 @@ export function ItemArt({
   return (
     <div
       className={cn('relative grid place-items-center overflow-hidden', className)}
-      style={{ background: `radial-gradient(circle at 30% 25%, ${color}33, ${color}cc)` }}
+      style={{ background: `radial-gradient(circle at 30% 25%, ${color}aa, ${color})` }}
       aria-hidden
     >
-      <span className="font-display text-3xl font-semibold text-white/90 drop-shadow">{initials}</span>
+      <span className="font-display text-3xl font-semibold text-gold drop-shadow">{initials}</span>
     </div>
   )
 }

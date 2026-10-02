@@ -1,6 +1,8 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
+import { logoOnLight } from '@/lib/brand'
 import { usePathname } from 'next/navigation'
 import { createContext, useContext } from 'react'
 import { BarChart3, ClipboardList, UtensilsCrossed, ListPlus, MapPinned, Settings, Users, Contact, PartyPopper, ScrollText, ArrowLeft } from 'lucide-react'
@@ -30,8 +32,9 @@ export function AdminShell({ role, name, children }: { role: StaffRole; name: st
       <div className="min-h-dvh bg-cream lg:grid lg:grid-cols-[240px_1fr]">
         <aside className="border-b border-line bg-surface lg:sticky lg:top-0 lg:h-dvh lg:border-b-0 lg:border-r">
           <div className="flex items-center justify-between px-4 py-3 lg:block">
-            <p className="font-display text-2xl font-semibold">
-              <span className="text-brand">Irie’s</span> admin
+            <p className="flex items-end gap-2">
+              <Image src={logoOnLight} alt="Irie's Cuisine" className="h-9 w-auto" sizes="120px" />
+              <span className="pb-0.5 text-xs font-bold uppercase tracking-widest text-muted">Admin</span>
             </p>
             <p className="hidden text-xs text-muted lg:block">
               {name} · {role}

@@ -169,8 +169,8 @@ Use **real phones**, one Android and one iPhone, on mobile data.
 |---|---|
 | Prices, dishes, photos, zones, hours, holidays | Admin pages (no developer needed) |
 | Pause all orders (power cut, overload) | Admin → Hours & settings → *Accepting orders* off |
-| Brand colours | Edit the block at the top of `src/app/globals.css` (on GitHub: open the file → pencil icon → commit). Vercel redeploys automatically. |
-| Logo / app icon | Developer runs `npm run icons -- path/to/logo.png` and commits |
+| Brand colours | Already set from your logo. To adjust, edit the block at the top of `src/app/globals.css` (on GitHub: open the file → pencil icon → commit). Vercel redeploys automatically. |
+| Logo / app icon / share card | Replace `brand/source/logo-dark-square.png` and `logo-light-square.png` (same layout: logo on its square background), then a developer runs `npm run brand` and commits. Every logo, icon and share image is regenerated. |
 | Privacy policy / terms text | `src/app/(shop)/privacy/page.tsx` and `terms/page.tsx`. **Have a lawyer review them before launch.** |
 
 ## 13. Troubleshooting

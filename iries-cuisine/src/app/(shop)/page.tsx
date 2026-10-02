@@ -48,9 +48,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative -mx-4 overflow-hidden bg-ink px-4 pb-10 pt-10 text-white sm:rounded-b-[2rem]">
-        <div className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-brand/40 blur-3xl" aria-hidden />
-        <div className="pointer-events-none absolute -bottom-32 left-10 size-72 rounded-full bg-accent/25 blur-3xl" aria-hidden />
+      <section className="brand-chevrons relative -mx-4 overflow-hidden px-4 pb-10 pt-10 text-white sm:rounded-b-[2rem]">
         <div className="relative mx-auto max-w-6xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Adenta · Accra</p>
           <h1 className="mt-3 max-w-xl font-display text-5xl font-semibold leading-[1.02] sm:text-6xl">

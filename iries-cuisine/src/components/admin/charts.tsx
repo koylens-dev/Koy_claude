@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/cn'
 
 // Small, dependency-free charts for the sales dashboard.
-// Single series in the brand colour (validated: contrast >= 3:1 on the surface),
+// Single series in the chart green from the logo (validated: lightness, chroma, contrast >= 3:1),
 // thin bars (<= 24px) with 4px rounded data-ends, hairline solid grid, hover + keyboard
 // tooltips, and a table view so no value depends on hovering.
 
-const BAR = 'var(--brand)'
-const GRID = '#ece4da'
+const BAR = 'var(--chart)'
+const GRID = '#ebe6d8'
 
 function niceStep(max: number, targetTicks = 4) {
   if (max <= 0) return 1
@@ -118,7 +118,7 @@ export function ColumnChart({
                 </g>
               )
             })}
-            <line x1={padL} x2={width - padR} y1={padT + plotH} y2={padT + plotH} stroke="#d9cdbf" strokeWidth={1} />
+            <line x1={padL} x2={width - padR} y1={padT + plotH} y2={padT + plotH} stroke="#d6cfbd" strokeWidth={1} />
           </svg>
         )}
         {active !== null && data[active] && (
@@ -169,7 +169,7 @@ export function BarList({ rows, format }: { rows: { label: string; value: number
               {r.sub && <span className="ml-1 text-xs text-muted">{r.sub}</span>}
             </span>
           </div>
-          <div className="mt-1 h-2.5 w-full rounded-r bg-[#f3ece4]">
+          <div className="mt-1 h-2.5 w-full rounded-r bg-[#f1ecdf]">
             <div className="h-2.5 rounded-r-[4px]" style={{ width: `${max ? Math.max(1, (r.value / max) * 100) : 0}%`, background: BAR }} />
           </div>
         </li>
