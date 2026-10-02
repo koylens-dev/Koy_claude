@@ -2,7 +2,7 @@
   "name": "iries-cuisine",
   "version": "1.0.0",
   "private": true,
-  "description": "Irie's Cuisine \u2014 food ordering PWA and restaurant operations platform (Adenta, Accra)",
+  "description": "Irie's Cuisine — food ordering PWA and restaurant operations platform (Adenta, Accra)",
   "engines": {
     "node": ">=20.9.0"
   },
@@ -30,6 +30,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@netlify/functions": "^6.0.2",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.20.4",
     "@types/react": "^19.3.0",

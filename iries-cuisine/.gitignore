@@ -34,3 +34,6 @@ npm-debug.log*
 # supabase cli
 supabase/.temp/
 supabase/.branches/
+
+# netlify
+.netlify

@@ -47,7 +47,8 @@ This guide takes you from nothing to a live ordering site. **You don't need to b
      1. `supabase/migrations/20261001000100_core_schema.sql`
      2. `supabase/migrations/20261001000200_functions.sql`
      3. `supabase/migrations/20261001000300_security.sql`
-     4. `supabase/seed.sql` (sample menu, zones and hours that you'll edit later; skip it if you prefer to start empty)
+     4. `supabase/migrations/20261002000100_demo_mode.sql`
+     5. `supabase/seed.sql` (sample menu, zones and hours that you'll edit later; skip it if you prefer to start empty)
    - **Developer way:** `npx supabase link --project-ref <ref>` then `npx supabase db push`, and run `seed.sql` in the SQL Editor.
 3. **Copy your keys:** Project Settings → **API Keys**.
    - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
@@ -195,6 +196,10 @@ Use **real phones**, one Android and one iPhone, on mobile data.
 | "Offline — reconnecting" stays red | The tablet's internet. Orders and payments are still safe on the server; the screen catches up on reconnect. |
 | A refund failed | Admin → Orders → filter **Needs attention** → open the order → **Retry refund** (or refund from the Paystack dashboard) |
 | Staff member left | Admin → Staff → switch them off. They lose access immediately. |
+
+## Preview on Netlify (optional)
+
+A test copy can run on Netlify before the Vercel setup, e.g. `https://iries-cuisine-preview.netlify.app`. `netlify.toml` and the 5-minute job in `netlify/functions/cron.mts` (it replaces the Vercel Cron) are already in the repo. Use a separate **free** Supabase project for it, Paystack **test** keys and `SMS_PROVIDER=console`. For sign-in without SMS, add test numbers under Supabase → Authentication → Sign In / Providers → Phone → *Test phone numbers and OTPs* (e.g. `233241110001=123456`). The production setup above stays on Vercel + Supabase Pro.
 
 ## For developers
 
