@@ -8,3 +8,9 @@
 [build.environment]
   NODE_VERSION = "22"
   NEXT_TELEMETRY_DISABLED = "1"
+
+# Netlify's Next.js adapter (server rendering, API routes, proxy.ts, images).
+# Declared explicitly because this project was created through the API, so it
+# isn't added automatically.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
