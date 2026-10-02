@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Search, Trash2, Copy, Send, CheckCircle2 } from 'lucide-react'
+import { Search, Trash2, Copy, Send, CheckCircle2, FlaskConical } from 'lucide-react'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import { fetchMenu } from '@/lib/menu'
 import type { Category, DeliveryZone, MenuItem } from '@/lib/types'
@@ -17,7 +17,10 @@ import type { PublicQuote } from '@/lib/server/quote'
 import { cn } from '@/lib/cn'
 
 type Line = { key: number; item: MenuItem; sel: ItemSelection }
-type Created = { order: { order_number: number; total_pesewas: number; customer_phone: string }; links: { pay: string; track: string } }
+type Created = {
+  order: { id: string; order_number: number; total_pesewas: number; customer_phone: string; is_demo: boolean }
+  links: { pay: string; track: string }
+}
 
 export function NewOrderForm() {
   const toast = useToast()
@@ -33,6 +36,8 @@ export function NewOrderForm() {
   const [address, setAddress] = useState({ gps: '', landmark: '', directions: '' })
   const [notes, setNotes] = useState('')
   const [sendSms, setSendSms] = useState(true)
+  const [practice, setPractice] = useState(false)
+  const [demoPaid, setDemoPaid] = useState(false)
   const [quote, setQuote] = useState<PublicQuote | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -57,7 +62,8 @@ export function NewOrderForm() {
     zoneId: fulfilment === 'delivery' ? zoneId || null : null,
     address: { gps: address.gps || null, landmark: address.landmark || null, directions: address.directions || null },
     notes: notes || null,
-    sendPaymentSms: sendSms,
+    sendPaymentSms: sendSms && !practice,
+    demo: practice,
     lines: lines.map((l) => ({
       itemId: l.item.id,
       portionId: l.sel.portionId,
@@ -104,6 +110,49 @@ export function NewOrderForm() {
     setNotes('')
     setQuote(null)
     setCreated(null)
+    setDemoPaid(false)
+  }
+
+  async function simulatePayment(orderId: string) {
+    setBusy(true)
+    const res = await fetch(`/api/staff/orders/${orderId}/demo-pay`, { method: 'POST' }).catch(() => null)
+    setBusy(false)
+    const json = await res?.json().catch(() => null)
+    if (!res?.ok) {
+      toast(json?.error?.message ?? 'Could not simulate the payment.', 'error')
+      return
+    }
+    setDemoPaid(true)
+    toast('Practice payment received', 'success')
+  }
+
+  if (created?.order.is_demo) {
+    return (
+      <div className="mx-auto max-w-lg rounded-3xl bg-surface p-6 text-center ring-1 ring-fuchsia-200">
+        <FlaskConical className="mx-auto size-12 text-fuchsia-700" aria-hidden />
+        <h2 className="mt-3 font-display text-3xl font-semibold">Practice order #{created.order.order_number}</h2>
+        <p className="mt-1 text-muted">
+          {formatCedis(created.order.total_pesewas)} · no SMS was sent and no real payment can be taken.
+        </p>
+        {demoPaid ? (
+          <p className="mt-4 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-950">
+            Paid (practice). It is now in <strong>Orders → New</strong> with the alarm, ready to accept and cook.
+          </p>
+        ) : (
+          <p className="mt-4 rounded-xl bg-fuchsia-50 p-3 text-sm text-fuchsia-950">
+            On a real order the customer would now pay with MoMo or card. Tap below to pretend they did.
+          </p>
+        )}
+        <div className="mt-4 grid gap-2">
+          {!demoPaid && (
+            <Button variant="success" size="lg" loading={busy} onClick={() => simulatePayment(created.order.id)}>
+              <FlaskConical className="size-4" aria-hidden /> Simulate payment
+            </Button>
+          )}
+          <Button variant={demoPaid ? 'primary' : 'secondary'} onClick={reset}>New order</Button>
+        </div>
+      </div>
+    )
   }
 
   if (created) {
@@ -218,9 +267,15 @@ export function NewOrderForm() {
           </div>
         )}
         <Field label="Notes" htmlFor="no-notes"><Textarea id="no-notes" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} /></Field>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" className="size-5 accent-[var(--brand)]" checked={sendSms} onChange={(e) => setSendSms(e.target.checked)} />
+        <label className={cn('flex items-center gap-2 text-sm', practice && 'opacity-40')}>
+          <input type="checkbox" className="size-5 accent-[var(--brand)]" checked={sendSms && !practice} disabled={practice} onChange={(e) => setSendSms(e.target.checked)} />
           Text the payment link to the customer
+        </label>
+        <label className="flex items-start gap-2 rounded-xl bg-fuchsia-50 p-2.5 text-sm text-fuchsia-950">
+          <input type="checkbox" className="mt-0.5 size-5 accent-fuchsia-700" checked={practice} onChange={(e) => setPractice(e.target.checked)} />
+          <span>
+            <strong>Practice order</strong> (training): no SMS, no real payment. Removed with the rest of the demo data.
+          </span>
         </label>
 
         {quote && (
@@ -234,7 +289,7 @@ export function NewOrderForm() {
         {error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-900" role="alert">{error}</p>}
         <div className="grid grid-cols-2 gap-2">
           <Button variant="secondary" loading={busy} onClick={() => submit('quote')}>Check total</Button>
-          <Button loading={busy} onClick={() => submit('place')}>Create & get pay link</Button>
+          <Button loading={busy} onClick={() => submit('place')}>{practice ? 'Create practice order' : 'Create & get pay link'}</Button>
         </div>
         <p className="text-xs text-muted">Prepaid only: the kitchen sees this order after the customer pays.</p>
       </section>

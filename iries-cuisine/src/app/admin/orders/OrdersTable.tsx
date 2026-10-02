@@ -7,6 +7,7 @@ import { Search } from 'lucide-react'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import { PageTitle } from '@/components/admin/AdminShell'
 import { StatusPill } from '@/components/ui/StatusPill'
+import { DemoBadge } from '@/components/staff/OrderCard'
 import { Input, Select } from '@/components/ui/Field'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { formatCedis } from '@/lib/money'
@@ -85,6 +86,7 @@ export function OrdersTable() {
                 <tr key={o.id} className="border-t border-line hover:bg-cream">
                   <td className="px-4 py-2.5">
                     <Link href={`/admin/orders/${o.id}`} className="font-semibold text-brand underline">#{o.order_number}</Link>
+                    {o.is_demo && <DemoBadge className="ml-2" />}
                     <span className="block text-xs text-muted">{o.channel} · {o.fulfilment}</span>
                   </td>
                   <td className="px-4 py-2.5 text-muted">{formatDateTime(o.created_at)}</td>

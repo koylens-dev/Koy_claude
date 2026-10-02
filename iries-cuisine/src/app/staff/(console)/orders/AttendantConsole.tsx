@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { BellRing, Volume2, VolumeX } from 'lucide-react'
+import { BellRing, FlaskConical, Volume2, VolumeX } from 'lucide-react'
 import { useLiveOrders } from '@/components/staff/useLiveOrders'
 import { useStaffAction } from '@/components/staff/useStaffAction'
 import { OrderCard } from '@/components/staff/OrderCard'
@@ -59,6 +59,7 @@ export function AttendantConsole({ defaultPrep }: { defaultPrep: number }) {
   }, [orders, now])
 
   const newCount = byTab.get('new')?.length ?? 0
+  const demoCount = useMemo(() => orders.filter((o) => o.is_demo).length, [orders])
 
   // Ring every few seconds until every paid order is accepted or rejected (or muted for a minute).
   const hasNew = newCount > 0
@@ -121,7 +122,7 @@ export function AttendantConsole({ defaultPrep }: { defaultPrep: number }) {
       )}
 
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <div className="flex flex-1 gap-1 overflow-x-auto rounded-2xl bg-surface p-1 ring-1 ring-line [scrollbar-width:none]" role="tablist">
+        <div className="flex w-full gap-1 overflow-x-auto rounded-2xl bg-surface p-1 ring-1 ring-line [scrollbar-width:none] sm:w-auto sm:flex-1" role="tablist">
           {TABS.map((t) => {
             const count = byTab.get(t.id)?.length ?? 0
             return (
@@ -152,6 +153,16 @@ export function AttendantConsole({ defaultPrep }: { defaultPrep: number }) {
           </Button>
         )}
       </div>
+
+      {demoCount > 0 && (
+        <p className="mb-3 flex items-start gap-2 rounded-xl bg-fuchsia-50 p-3 text-sm text-fuchsia-950 ring-1 ring-fuchsia-200">
+          <FlaskConical className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <span>
+            <strong>Training mode:</strong> orders marked DEMO are practice. They never text customers or move money. Use “Simulate payment” to
+            practise a phone order. The owner removes all demo orders before go-live.
+          </span>
+        </p>
+      )}
 
       {connection === 'offline' && (
         <p className="mb-3 rounded-xl bg-red-50 p-3 text-sm text-red-900" role="alert">

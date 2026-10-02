@@ -164,6 +164,7 @@ export type OrderRow = {
   delivery_code: string
   created_by: string | null
   paid_payment_id: string | null
+  is_demo: boolean
   paid_at: string | null
   accepted_at: string | null
   rejected_at: string | null

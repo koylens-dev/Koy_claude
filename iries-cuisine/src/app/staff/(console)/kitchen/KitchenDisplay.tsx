@@ -119,7 +119,10 @@ export function KitchenDisplay() {
         <Column title="Ready (last 45 min)" count={ready.length}>
           {ready.map((o) => (
             <div key={o.id} className="flex items-center justify-between rounded-2xl bg-emerald-950/60 px-4 py-3 ring-1 ring-emerald-800">
-              <span className="font-display text-3xl font-bold">#{o.order_number}</span>
+              <span className="flex items-center gap-2 font-display text-3xl font-bold">
+                #{o.order_number}
+                {o.is_demo && <DemoChip />}
+              </span>
               <span className="text-sm text-emerald-200">
                 {o.fulfilment === 'delivery' ? 'Delivery' : 'Pickup'} · ready {formatTime(o.ready_at!)}
               </span>
@@ -156,7 +159,10 @@ function Ticket({ order, now, since, children }: { order: OrderWithItems; now: n
     <article className={cn('rounded-2xl p-4 ring-2', tone)}>
       <header className="flex items-start justify-between gap-2">
         <div>
-          <p className="font-display text-4xl font-bold leading-none">#{order.order_number}</p>
+          <p className="flex items-center gap-2 font-display text-4xl font-bold leading-none">
+            #{order.order_number}
+            {order.is_demo && <DemoChip />}
+          </p>
           <p className="mt-1 text-sm text-white/70">
             {order.fulfilment === 'delivery' ? `Delivery · ${order.zone_name ?? ''}` : 'Pickup'} · {order.customer_name.split(' ')[0]}
           </p>
@@ -194,5 +200,13 @@ function Ticket({ order, now, since, children }: { order: OrderWithItems; now: n
         </a>
       </footer>
     </article>
+  )
+}
+
+function DemoChip() {
+  return (
+    <span className="rounded-md bg-fuchsia-300 px-1.5 py-0.5 font-sans text-xs font-bold uppercase tracking-wide text-fuchsia-950" title="Practice order: do not cook">
+      Demo
+    </span>
   )
 }

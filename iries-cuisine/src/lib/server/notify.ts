@@ -29,11 +29,24 @@ export function payUrl(token: string) {
 /**
  * Send an SMS about an order at most once per (order, kind). Never throws:
  * a failed SMS must not break a payment confirmation or a status change.
+ * Demo/training orders are never texted: the message is logged as "skipped"
+ * so trainees can still see what the customer would have received.
  */
 export async function sendOrderSms(orderId: string, kind: OrderNotificationKind, recipient: string, body: string) {
   const admin = getAdminSupabase()
   const message = toGsmSafe(body)
   try {
+    const { data: order } = await admin.from('orders').select('is_demo').eq('id', orderId).maybeSingle()
+    if (order?.is_demo) {
+      await admin
+        .from('notifications')
+        .upsert(
+          { order_id: orderId, kind, channel: 'sms', recipient, body: message, status: 'skipped', provider: 'demo', error: 'Demo order: SMS not sent' },
+          { onConflict: 'order_id,kind,channel', ignoreDuplicates: true },
+        )
+      return { skipped: true }
+    }
+
     const { data: inserted, error } = await admin
       .from('notifications')
       .upsert(

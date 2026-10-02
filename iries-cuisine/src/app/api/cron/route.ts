@@ -97,6 +97,7 @@ export async function GET(req: NextRequest) {
       .from('orders')
       .select('id, order_number, total_pesewas, paid_at')
       .eq('status', 'paid')
+      .eq('is_demo', false)
       .lt('paid_at', cutoff)
       .limit(10)
     for (const o of waiting ?? []) {

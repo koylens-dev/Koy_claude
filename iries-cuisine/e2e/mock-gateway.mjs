@@ -1,18 +1,28 @@
 // Local stand-in for Supabase's API gateway + a fake Paystack, for end-to-end tests.
 //  /rest/v1/*         -> PostgREST on :3001
 //  /auth/v1/user      -> validates our HS256 JWT and returns a GoTrue-style user
+//  /auth/v1/admin/users -> create / delete users (writes auth.users through psql)
 //  /paystack/*        -> fake Paystack (initialize, verify, refund)
 import http from 'node:http'
 import crypto from 'node:crypto'
+import { execFileSync } from 'node:child_process'
 
 const SECRET = process.env.JWT_SECRET
 const tx = new Map() // reference -> { amount, status }
+const stats = { refunds: 0 } // how often the app called Paystack's refund API
 
 function verifyJwt(token) {
   const [h, p, s] = token.split('.')
   const sig = crypto.createHmac('sha256', SECRET).update(`${h}.${p}`).digest('base64url')
   if (sig !== s) return null
   return JSON.parse(Buffer.from(p, 'base64url').toString())
+}
+
+// Run one SQL statement against the e2e database (psql variables keep values quoted safely).
+function sql(statement, vars = {}) {
+  const args = ['-h', process.env.E2E_PGHOST, '-p', '54329', '-U', 'postgres', '-d', 'postgres', '-qAt', '-v', 'ON_ERROR_STOP=1']
+  for (const [k, v] of Object.entries(vars)) args.push('-v', `${k}=${v}`)
+  return execFileSync(process.env.E2E_PSQL ?? 'psql', args, { input: statement }).toString().trim()
 }
 
 const CORS = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS' }
@@ -52,6 +62,27 @@ const server = http.createServer(async (req, res) => {
     if (!claims || !claims.sub) return send(res, 401, { msg: 'invalid JWT' })
     return send(res, 200, { id: claims.sub, aud: 'authenticated', role: 'authenticated', email: claims.email ?? '', phone: claims.phone ?? '', app_metadata: {}, user_metadata: {}, created_at: new Date().toISOString() })
   }
+  if (url.pathname.startsWith('/auth/v1/admin/users')) {
+    const claims = verifyJwt((req.headers.authorization ?? '').replace('Bearer ', ''))
+    if (claims?.role !== 'service_role') return send(res, 403, { msg: 'service role required' })
+    const id = url.pathname.split('/')[5]
+    if (req.method === 'POST' && !id) {
+      const b = JSON.parse(body.toString())
+      const newId = crypto.randomUUID()
+      try {
+        sql(`insert into auth.users (id, email) values (:'id', :'email');`, { id: newId, email: b.email })
+      } catch {
+        return send(res, 422, { code: 422, error_code: 'email_exists', msg: 'A user with this email address has already been registered' })
+      }
+      return send(res, 200, { id: newId, aud: 'authenticated', role: 'authenticated', email: b.email, user_metadata: b.user_metadata ?? {}, app_metadata: {}, created_at: new Date().toISOString() })
+    }
+    if (req.method === 'DELETE' && id) {
+      sql(`delete from auth.users where id = :'id';`, { id })
+      return send(res, 200, { id, aud: 'authenticated', role: 'authenticated', app_metadata: {}, user_metadata: {}, created_at: new Date().toISOString() })
+    }
+    if (req.method === 'PUT' && id) return send(res, 200, { id, aud: 'authenticated', role: 'authenticated', app_metadata: {}, user_metadata: {}, created_at: new Date().toISOString() })
+    return send(res, 404, { msg: 'not found' })
+  }
   if (url.pathname.startsWith('/auth/v1/')) return send(res, 200, { keys: [] })
 
   if (url.pathname === '/paystack/transaction/initialize') {
@@ -71,7 +102,9 @@ const server = http.createServer(async (req, res) => {
     if (tx.has(ref)) tx.get(ref).status = 'success'
     return send(res, 200, { ok: tx.has(ref) })
   }
+  if (url.pathname === '/paystack/__stats') return send(res, 200, stats) // test helper
   if (url.pathname === '/paystack/refund') {
+    stats.refunds++
     const b = JSON.parse(body.toString())
     return send(res, 200, { status: true, data: { id: Math.floor(Math.random() * 1e6), status: 'pending', amount: b.amount, currency: 'GHS', transaction: { reference: b.transaction } } })
   }

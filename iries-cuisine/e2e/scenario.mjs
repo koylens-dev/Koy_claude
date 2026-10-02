@@ -1,5 +1,6 @@
 // End-to-end scenario against the running app (http://localhost:3100): checkout, payment
-// webhooks, staff status changes, refunds, phone orders, exports, cron and the OTP hook.
+// webhooks, staff status changes, refunds, phone orders, exports, cron, the OTP hook and
+// demo / training mode.
 // Start the stack first:  bash e2e/up.sh   (see e2e/README.md)
 import crypto from 'node:crypto'
 import { sign } from './jwt.mjs'
@@ -28,6 +29,7 @@ const customer = cookieFor({ id: '11111111-1111-4111-8111-111111111111', phone: 
 const attendant = cookieFor({ id: '22222222-2222-4222-8222-222222222222', email: 'esi@iries.test' })
 const manager = cookieFor({ id: '33333333-3333-4333-8333-333333333333', email: 'akua@iries.test' })
 const kitchen = cookieFor({ id: '44444444-4444-4444-8444-444444444444', email: 'kojo@iries.test' })
+const owner = cookieFor({ id: '55555555-5555-4555-8555-555555555555', email: 'owner@iries.test' })
 
 async function call(path, { method = 'GET', cookie, body, headers = {} } = {}) {
   const res = await fetch(APP + path, {
@@ -185,6 +187,75 @@ ok(cat.status === 200, 'catering enquiry saved')
 const mgrKey = sign({ sub: '33333333-3333-4333-8333-333333333333', role: 'authenticated' }, SECRET)
 const summary = await (await fetch('http://localhost:54321/rest/v1/rpc/sales_summary', { method: 'POST', headers: { apikey: mgrKey, authorization: `Bearer ${mgrKey}`, 'content-type': 'application/json' }, body: JSON.stringify({ p_from: new Date(Date.now() - 86400000).toISOString().slice(0, 10), p_to: new Date(Date.now() + 86400000).toISOString().slice(0, 10) }) })).json()
 ok(summary.totals?.orders === 1 && summary.totals.refunds_pesewas === o.total_pesewas, 'sales summary counts the order and its refunds', JSON.stringify(summary.totals))
+
+// ---- demo / training mode
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+const paystackRefunds = async () => (await (await fetch('http://localhost:54321/paystack/__stats')).json()).refunds
+ok((await call('/api/admin/demo', { method: 'POST', cookie: manager, body: { action: 'seed' } })).status === 403, 'only the owner can load demo data')
+ok((await call('/api/admin/demo', { cookie: attendant })).status === 403, 'attendant cannot see demo status')
+const seeded = await call('/api/admin/demo', { method: 'POST', cookie: owner, body: { action: 'seed' } })
+ok(seeded.status === 200 && seeded.json.seeded.history_orders > 500 && seeded.json.seeded.live_orders === 10, 'owner loads six weeks of demo orders + 10 live ones', seeded.text.slice(0, 200))
+ok(seeded.json?.logins?.length === 4 && seeded.json.logins.every((l) => l.password.length === 14), 'four practice logins returned once', JSON.stringify(seeded.json?.logins?.map((l) => l.role)))
+ok((await call('/api/admin/demo', { method: 'POST', cookie: owner, body: { action: 'seed' } })).status === 409, 'demo data cannot be loaded twice')
+const demoStatus = await call('/api/admin/demo', { cookie: manager })
+ok(demoStatus.status === 200 && demoStatus.json.orders > 500 && demoStatus.json.staff.length === 4, 'manager sees demo status')
+const demoStaff = await rest('/staff?is_demo=eq.true&role=eq.attendant&select=user_id')
+const demoAttendant = cookieFor({ id: demoStaff[0].user_id, email: seeded.json.logins.find((l) => l.role === 'attendant').email })
+ok((await call('/staff/orders', { cookie: demoAttendant })).status === 200, 'practice attendant login opens the console')
+
+const [demoUnpaid] = await rest('/orders?is_demo=eq.true&status=eq.awaiting_payment&select=id,public_token,order_number')
+const demoPayLink = await call(`/pay/${demoUnpaid.public_token}`)
+ok(demoPayLink.status === 303 && demoPayLink.location.includes(`/t/${demoUnpaid.public_token}?error=demo`), 'demo pay link never reaches Paystack', demoPayLink.location)
+ok((await call(`/api/staff/orders/${phoneOrder.json.order.id}/demo-pay`, { method: 'POST', cookie: attendant })).status === 403, 'real orders cannot be "simulated" paid')
+ok((await call(`/api/staff/orders/${demoUnpaid.id}/demo-pay`, { method: 'POST', cookie: kitchen })).status === 403, 'kitchen cannot simulate payments')
+const demoPaid = await call(`/api/staff/orders/${demoUnpaid.id}/demo-pay`, { method: 'POST', cookie: demoAttendant })
+ok(demoPaid.status === 200 && demoPaid.json.order.status === 'paid', 'simulated payment moves the demo order to New (paid)', demoPaid.text.slice(0, 200))
+const demoAcc = await call(`/api/staff/orders/${demoUnpaid.id}/status`, { method: 'POST', cookie: demoAttendant, body: { to: 'accepted', prepMinutes: 15 } })
+ok(demoAcc.json?.order?.status === 'accepted', 'staff practise accepting a demo order')
+await sleep(600)
+const demoNotes = await rest(`/notifications?order_id=eq.${demoUnpaid.id}&select=kind,status,provider`)
+ok(demoNotes.length >= 2 && demoNotes.every((n) => n.status === 'skipped' && n.provider === 'demo'), 'demo orders never send SMS (logged as skipped)', JSON.stringify(demoNotes))
+
+const refundsBefore = await paystackRefunds()
+const [demoNew] = await rest('/orders?is_demo=eq.true&status=eq.paid&select=id,total_pesewas&limit=1')
+const demoReject = await call(`/api/staff/orders/${demoNew.id}/status`, { method: 'POST', cookie: demoAttendant, body: { to: 'rejected', note: 'Practice: sold out' } })
+ok(demoReject.status === 200 && demoReject.json.refund?.ok && demoReject.json.order.status === 'refunded', 'practice rejection refunds the demo order', demoReject.text.slice(0, 300))
+const [demoKitchen] = await rest('/orders?is_demo=eq.true&status=eq.in_kitchen&select=id&limit=1')
+const demoPartial = await call(`/api/staff/orders/${demoKitchen.id}/refund`, { method: 'POST', cookie: manager, body: { amountPesewas: 500, reason: 'Practice partial refund' } })
+ok(demoPartial.status === 200 && demoPartial.json.refund.ok, 'practice partial refund recorded', demoPartial.text.slice(0, 200))
+ok((await paystackRefunds()) === refundsBefore, 'demo refunds never call Paystack')
+const [demoRefund] = await rest(`/refunds?order_id=eq.${demoNew.id}&select=status,provider_refund_id`)
+ok(demoRefund?.status === 'processed' && demoRefund.provider_refund_id.startsWith('DEMO-RF-'), 'demo refund marked processed locally', JSON.stringify(demoRefund))
+
+const cronDemo = await call('/api/cron', { headers: { authorization: 'Bearer e2e-cron-secret' } })
+ok(cronDemo.status === 200 && cronDemo.json.staffAlerts === 0, 'unaccepted demo orders never SMS the manager', cronDemo.text)
+
+const practice = await call('/api/staff/orders', {
+  method: 'POST',
+  cookie: attendant,
+  body: { mode: 'place', channel: 'phone', demo: true, customer: { name: 'Practice Customer', phone: '0241119999' }, fulfilment: 'pickup', address: {}, lines: [{ itemId: jollof.id, portionId: large.id, optionIds: [hot.id], quantity: 1 }], sendPaymentSms: true },
+})
+ok(practice.status === 200 && practice.json.order.is_demo === true, 'attendant creates a practice order', practice.text.slice(0, 200))
+await sleep(600)
+ok((await rest(`/notifications?order_id=eq.${practice.json.order.id}&select=id`)).length === 0, 'practice order sends no payment-link SMS')
+ok((await call(`/api/staff/orders/${practice.json.order.id}/demo-pay`, { method: 'POST', cookie: attendant })).json?.order?.status === 'paid', 'practice order can be simulated paid')
+
+const csvDemo = await call('/api/admin/export?type=orders&from=2020-01-01&to=2030-12-31', { cookie: manager })
+ok(csvDemo.status === 200 && csvDemo.text.split('\n').length <= 4 && !csvDemo.text.includes('+2332000'), 'accounting export leaves demo orders out', `${csvDemo.text.split('\n').length} lines`)
+const payCsv = await call('/api/admin/export?type=payments&from=2020-01-01&to=2030-12-31', { cookie: manager })
+ok(payCsv.status === 200 && !payCsv.text.includes('DEMO-'), 'payments export leaves demo payments out')
+const custDemo = await call('/api/admin/export?type=customers', { cookie: manager })
+ok(custDemo.status === 200 && !custDemo.text.includes('+2332000') && custDemo.text.includes('+233241110001'), 'customer export never includes demo numbers')
+const summaryDemo = await (await fetch('http://localhost:54321/rest/v1/rpc/sales_summary', { method: 'POST', headers: { apikey: mgrKey, authorization: `Bearer ${mgrKey}`, 'content-type': 'application/json' }, body: JSON.stringify({ p_from: new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10), p_to: new Date().toISOString().slice(0, 10) }) })).json()
+ok(summaryDemo.totals?.orders > 300, 'sales report shows the demo history', `${summaryDemo.totals?.orders} orders`)
+
+ok((await call('/api/admin/demo', { method: 'POST', cookie: manager, body: { action: 'clear' } })).status === 403, 'only the owner can remove demo data')
+const cleared = await call('/api/admin/demo', { method: 'POST', cookie: owner, body: { action: 'clear' } })
+ok(cleared.status === 200 && cleared.json.orders > 500 && cleared.json.staff === 4, 'owner removes all demo data in one click', cleared.text)
+ok((await rest('/orders?is_demo=eq.true&select=id')).length === 0 && (await rest('/staff?is_demo=eq.true&select=user_id')).length === 0, 'no demo orders or practice logins left')
+const realLeft = await rest(`/orders?id=in.(${orderId},${phoneOrder.json.order.id})&select=id`)
+ok(realLeft.length === 2, 'real orders untouched')
+ok((await call('/staff/orders', { cookie: demoAttendant })).location?.includes('/staff/login'), 'practice login no longer works')
 
 console.log(failures ? `\n${failures} FAILED` : '\nAll end-to-end checks passed.')
 process.exit(failures ? 1 : 0)

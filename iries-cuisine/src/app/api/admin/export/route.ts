@@ -10,6 +10,7 @@ import { formatDateTime, zonedToUtc } from '@/lib/time'
 export const maxDuration = 60
 
 // GET /api/admin/export?type=orders|items|payments|customers&from=YYYY-MM-DD&to=YYYY-MM-DD
+// Exports are for the accountant and marketing, so demo / practice rows are always left out.
 // CSV (opens in Excel / Google Sheets). Column names are stable so the files can be
 // imported into an accounting system (e.g. Odoo) later.
 export async function GET(req: NextRequest) {
@@ -33,6 +34,7 @@ export async function GET(req: NextRequest) {
     const { data, error } = await admin
       .from('orders')
       .select('*, payments!orders_paid_payment_fk(reference, channel, fees_pesewas)')
+      .eq('is_demo', false)
       .gte('created_at', fromIso)
       .lt('created_at', toIso)
       .order('created_at')
@@ -63,7 +65,8 @@ export async function GET(req: NextRequest) {
   } else if (type === 'items') {
     const { data, error } = await admin
       .from('order_items')
-      .select('*, orders!inner(order_number, paid_at, status)')
+      .select('*, orders!inner(order_number, paid_at, status, is_demo)')
+      .eq('orders.is_demo', false)
       .gte('orders.paid_at', fromIso)
       .lt('orders.paid_at', toIso)
       .limit(100000)
@@ -80,6 +83,7 @@ export async function GET(req: NextRequest) {
     const { data, error } = await admin
       .from('payments')
       .select('*, orders!payments_order_id_fkey(order_number)')
+      .not('reference', 'like', 'DEMO-%')
       .gte('created_at', fromIso)
       .lt('created_at', toIso)
       .order('created_at')

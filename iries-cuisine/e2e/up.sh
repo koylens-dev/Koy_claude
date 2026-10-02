@@ -34,11 +34,13 @@ insert into auth.users (id, phone) values ('11111111-1111-4111-8111-111111111111
 insert into auth.users (id, email) values
   ('22222222-2222-4222-8222-222222222222', 'esi@iries.test'),
   ('33333333-3333-4333-8333-333333333333', 'akua@iries.test'),
-  ('44444444-4444-4444-8444-444444444444', 'kojo@iries.test');
+  ('44444444-4444-4444-8444-444444444444', 'kojo@iries.test'),
+  ('55555555-5555-4555-8555-555555555555', 'owner@iries.test');
 insert into public.staff (user_id, display_name, role) values
   ('22222222-2222-4222-8222-222222222222', 'Esi', 'attendant'),
   ('33333333-3333-4333-8333-333333333333', 'Akua', 'manager'),
-  ('44444444-4444-4444-8444-444444444444', 'Kojo', 'kitchen');
+  ('44444444-4444-4444-8444-444444444444', 'Kojo', 'kitchen'),
+  ('55555555-5555-4555-8555-555555555555', 'Irie', 'owner');
 SQL
 cat > "$PGROOT/postgrest.conf" <<CONF
 db-uri = "postgres://authenticator@/postgres?host=$SOCK&port=54329"
@@ -49,7 +51,7 @@ server-port = 3001
 server-host = "127.0.0.1"
 CONF
 nohup "$POSTGREST_BIN" "$PGROOT/postgrest.conf" > "$PGROOT/postgrest.log" 2>&1 & echo $! > "$PGROOT/postgrest.pid"
-nohup node "$E2E/mock-gateway.mjs" > "$PGROOT/gateway.log" 2>&1 & echo $! > "$PGROOT/gateway.pid"
+E2E_PSQL="$PGBIN/psql" E2E_PGHOST="$SOCK" nohup node "$E2E/mock-gateway.mjs" > "$PGROOT/gateway.log" 2>&1 & echo $! > "$PGROOT/gateway.pid"
 cd "$APP" && npx next build >/dev/null
 nohup npx next start -p 3100 > "$PGROOT/next.log" 2>&1 & echo $! > "$PGROOT/next.pid"
 for _ in $(seq 1 40); do curl -sf -o /dev/null http://localhost:3100/api/health && break; sleep 1; done

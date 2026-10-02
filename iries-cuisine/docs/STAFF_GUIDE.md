@@ -27,6 +27,18 @@ If the red **"Offline — reconnecting"** badge shows, check the Wi-Fi or switch
 - Yellow boxes are the customer's notes: read them every time (allergies, "no onions").
 - Scheduled orders (blue) appear 90 minutes before you need to start them.
 
+## Practice (training mode, before launch)
+
+Orders with a pink **DEMO** badge are practice orders. Handle them exactly like real ones: accept, cook, send out, refund. Nothing reaches a real customer:
+
+- No SMS is sent and no money moves. Refunds are only recorded.
+- The Call and WhatsApp buttons are hidden, because the demo numbers are made up. **Never dial a demo number by hand.**
+- On the Kitchen screen, DEMO tickets say *Demo*, and printed ones say **PRACTICE: DO NOT COOK**.
+- **Practise a phone order:** New order → tick **Practice order** → Create practice order → **Simulate payment**. The alarm rings and the order arrives in *New*, just like a real paid order.
+- Practise with the training logins the owner gives you, or your own login.
+
+The owner removes all DEMO orders before go-live. If you see a DEMO badge after launch, tell the manager.
+
 ## Managers
 
 - **Refunds:** on any paid order → *Partial refund…* (amount + reason) or *Cancel & refund*. All refunds go into the audit log.

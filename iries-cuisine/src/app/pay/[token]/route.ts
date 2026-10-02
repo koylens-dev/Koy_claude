@@ -17,6 +17,10 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/pay/[token]'>) {
   const { data: order } = await admin.from('orders').select('*').eq('public_token', token).maybeSingle()
   if (!order) return NextResponse.redirect(new URL('/', req.url), 303)
   if (order.status !== 'awaiting_payment') return NextResponse.redirect(trackUrl, 303)
+  if (order.is_demo) {
+    trackUrl.searchParams.set('error', 'demo')
+    return NextResponse.redirect(trackUrl, 303)
+  }
 
   if (!(await rateLimit(`pay:${token}`, 12, 600))) {
     trackUrl.searchParams.set('error', 'rate_limited')

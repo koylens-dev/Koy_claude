@@ -24,6 +24,7 @@ function newReference(orderNumber: number) {
  */
 export async function getCheckoutUrl(order: OrderRow): Promise<string> {
   if (order.status !== 'awaiting_payment') throw new Error('order_not_awaiting_payment')
+  if (order.is_demo) throw new Error('demo_order') // demo orders never reach Paystack
   const admin = getAdminSupabase()
 
   const { data: recent } = await admin
@@ -195,6 +196,21 @@ export async function issueRefund(input: {
   }
 
   const { data: payment } = await admin.from('payments').select('reference').eq('id', refund.payment_id).single()
+
+  // Demo/training orders: simulate the gateway, never call Paystack.
+  const { data: order } = await admin.from('orders').select('is_demo').eq('id', input.orderId).single()
+  if (order?.is_demo) {
+    const { data: fin, error: finError } = await admin.rpc('finalize_refund', {
+      p_refund_id: refund.id,
+      p_ok: true,
+      p_provider_refund_id: `DEMO-RF-${refund.id.slice(0, 8)}`,
+      p_provider_status: 'processed',
+      p_error: null,
+    })
+    if (finError) return { ok: false, refundId: refund.id, error: finError.message }
+    const result = fin as { status: string; order_refunded: boolean }
+    return { ok: true, refundId: refund.id, amountPesewas: refund.amount_pesewas, status: result.status, orderRefunded: result.order_refunded }
+  }
 
   try {
     const gateway = await createRefund({

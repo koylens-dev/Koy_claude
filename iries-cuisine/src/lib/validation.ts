@@ -49,6 +49,7 @@ export const staffOrderSchema = orderCoreSchema.extend({
     email: z.union([z.email(), z.literal('')]).nullish(),
   }),
   sendPaymentSms: z.boolean().default(true),
+  demo: z.boolean().default(false), // practice order: no SMS, no real payment
 })
 export type StaffOrderInput = z.infer<typeof staffOrderSchema>
 

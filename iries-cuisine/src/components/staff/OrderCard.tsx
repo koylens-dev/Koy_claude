@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Phone, MapPin, Printer, Clock, StickyNote, Copy, Send, Bike, Store } from 'lucide-react'
+import { Phone, MapPin, Printer, Clock, StickyNote, Copy, Send, Bike, Store, FlaskConical } from 'lucide-react'
 import type { OrderWithItems, StaffRole } from '@/lib/types'
 import { StatusPill } from '@/components/ui/StatusPill'
 import { Button } from '@/components/ui/Button'
@@ -40,6 +40,7 @@ export function OrderCard({
   const [rider, setRider] = useState({ name: order.rider_name ?? '', phone: order.rider_phone ?? '' })
   const [refundAmount, setRefundAmount] = useState('')
   const [refundBusy, setRefundBusy] = useState(false)
+  const [demoPayBusy, setDemoPayBusy] = useState(false)
 
   const can = (to: Parameters<typeof canTransition>[1]) => canTransition(order.status, to, role, order.fulfilment)
   const busy = (to: string) => action.busy === `${order.id}:${to}`
@@ -49,6 +50,8 @@ export function OrderCard({
   const manager = role === 'manager' || role === 'owner'
   const paidMinutes = order.paid_at ? minutesBetween(order.paid_at) : null
   const payLink = `${publicEnv.siteUrl}/pay/${order.public_token}`
+  // Demo orders use made-up numbers that may belong to real people: never call, text or WhatsApp them.
+  const demo = order.is_demo
 
   const riderMessage = [
     `Irie's order #${order.order_number}`,
@@ -85,9 +88,22 @@ export function OrderCard({
       toast(json?.error?.message ?? 'Refund failed.', 'error')
       return
     }
-    toast('Refund sent to Paystack.', 'success')
+    toast(demo ? 'Practice refund recorded. No money moved.' : 'Refund sent to Paystack.', 'success')
     setDialog(null)
     setNote('')
+    onRefunded()
+  }
+
+  async function simulatePayment() {
+    setDemoPayBusy(true)
+    const res = await fetch(`/api/staff/orders/${order.id}/demo-pay`, { method: 'POST' }).catch(() => null)
+    setDemoPayBusy(false)
+    const json = await res?.json().catch(() => null)
+    if (!res?.ok) {
+      toast(json?.error?.message ?? 'Could not simulate the payment.', 'error')
+      return
+    }
+    toast(`Practice payment received for #${order.order_number}`, 'success')
     onRefunded()
   }
 
@@ -103,6 +119,7 @@ export function OrderCard({
         <span className="font-display text-2xl font-bold">#{order.order_number}</span>
         <StatusPill status={order.status} />
         {order.channel !== 'web' && <span className="rounded-full bg-violet-50 px-2 py-0.5 text-xs font-semibold text-violet-900">{CHANNEL_LABEL[order.channel]}</span>}
+        {demo && <DemoBadge />}
         <span className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-muted">
           {delivery ? <Bike className="size-4" aria-hidden /> : <Store className="size-4" aria-hidden />}
           {delivery ? 'Delivery' : 'Pickup'}
@@ -120,14 +137,16 @@ export function OrderCard({
             <p className="font-semibold">{order.customer_name}</p>
             <p className="text-muted">{formatGhanaPhone(order.customer_phone)}</p>
           </div>
-          <div className="flex gap-1">
-            <a href={`tel:${order.customer_phone}`} className="grid size-10 place-items-center rounded-xl ring-1 ring-line hover:bg-black/5" aria-label="Call customer">
-              <Phone className="size-4" />
-            </a>
-            <a href={whatsappLink(order.customer_phone, `Hello ${order.customer_name.split(' ')[0]}, this is Irie's Cuisine about your order #${order.order_number}. `)} target="_blank" rel="noopener noreferrer" className="grid size-10 place-items-center rounded-xl bg-[#25D366] text-xs font-bold text-white" aria-label="WhatsApp customer">
-              WA
-            </a>
-          </div>
+          {!demo && (
+            <div className="flex gap-1">
+              <a href={`tel:${order.customer_phone}`} className="grid size-10 place-items-center rounded-xl ring-1 ring-line hover:bg-black/5" aria-label="Call customer">
+                <Phone className="size-4" />
+              </a>
+              <a href={whatsappLink(order.customer_phone, `Hello ${order.customer_name.split(' ')[0]}, this is Irie's Cuisine about your order #${order.order_number}. `)} target="_blank" rel="noopener noreferrer" className="grid size-10 place-items-center rounded-xl bg-[#25D366] text-xs font-bold text-white" aria-label="WhatsApp customer">
+                WA
+              </a>
+            </div>
+          )}
         </div>
 
         {delivery && (
@@ -210,12 +229,24 @@ export function OrderCard({
             {delivery ? 'Delivered' : 'Collected'}
           </Button>
         )}
-        {order.status === 'out_for_delivery' && (
+        {order.status === 'out_for_delivery' && !demo && (
           <a href={whatsappLink(normalizeGhanaPhone(order.rider_phone) ?? order.customer_phone, riderMessage)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1 rounded-xl px-3 text-sm font-semibold ring-1 ring-line">
             <Send className="size-4" aria-hidden /> Rider info
           </a>
         )}
-        {order.status === 'awaiting_payment' && (
+        {order.status === 'awaiting_payment' && demo && (
+          <>
+            <Button variant="success" size="lg" className="flex-1" loading={demoPayBusy} onClick={simulatePayment}>
+              <FlaskConical className="size-4" aria-hidden /> Simulate payment
+            </Button>
+            {can('cancelled') && (
+              <Button variant="ghost" loading={busy('cancelled')} onClick={() => action.change(order.id, 'cancelled', { note: 'Cancelled by staff before payment' })}>
+                Cancel
+              </Button>
+            )}
+          </>
+        )}
+        {order.status === 'awaiting_payment' && !demo && (
           <>
             <Button
               variant="secondary"
@@ -277,7 +308,9 @@ export function OrderCard({
             </Button>
           }
         >
-          <p className="text-sm text-muted">How long until it’s ready? The customer gets an SMS with this estimate.</p>
+          <p className="text-sm text-muted">
+            How long until it’s ready? {demo ? 'On a real order the customer gets an SMS with this estimate (practice orders send nothing).' : 'The customer gets an SMS with this estimate.'}
+          </p>
           <div className="mt-4 grid grid-cols-3 gap-2">
             {PREP_CHOICES.map((m) => (
               <button
@@ -313,7 +346,9 @@ export function OrderCard({
             </Button>
           }
         >
-          <p className="text-sm text-muted">The customer is refunded in full automatically and gets an SMS with your reason.</p>
+          <p className="text-sm text-muted">
+            {demo ? 'Practice order: the refund is only recorded. No money moves and no SMS is sent.' : 'The customer is refunded in full automatically and gets an SMS with your reason.'}
+          </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {REJECT_REASONS.map((r) => (
               <button key={r} type="button" onClick={() => setNote(r)} className={cn('min-h-11 rounded-full px-3 text-sm ring-1', note === r ? 'bg-ink text-white ring-ink' : 'ring-line')}>
@@ -352,6 +387,7 @@ export function OrderCard({
             <Field label="Rider phone (optional)" htmlFor={`rp-${order.id}`} hint="Shown to the customer so they can call the rider">
               <Input id={`rp-${order.id}`} type="tel" value={rider.phone} onChange={(e) => setRider((r) => ({ ...r, phone: e.target.value }))} placeholder="024 123 4567" />
             </Field>
+            {!demo && (
             <a
               href={whatsappLink(normalizeGhanaPhone(rider.phone) ?? '+233000000000', riderMessage)}
               target="_blank"
@@ -360,6 +396,7 @@ export function OrderCard({
             >
               <Send className="size-4" aria-hidden /> Send address to rider on WhatsApp
             </a>
+            )}
           </div>
         </Dialog>
       )}
@@ -403,5 +440,16 @@ export function OrderCard({
         </Dialog>
       )}
     </article>
+  )
+}
+
+export function DemoBadge({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn('inline-flex items-center gap-1 rounded-full bg-fuchsia-100 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-fuchsia-900', className)}
+      title="Demo / practice order: no SMS, no real payment"
+    >
+      <FlaskConical className="size-3" aria-hidden /> Demo
+    </span>
   )
 }

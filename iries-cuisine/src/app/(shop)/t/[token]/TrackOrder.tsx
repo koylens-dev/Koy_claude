@@ -124,6 +124,7 @@ export function TrackOrder({ token, initial, reference, error }: { token: string
             </div>
             {error === 'gateway_unavailable' && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-950">The payment service was busy. Please tap “Pay now” again.</p>}
             {error === 'rate_limited' && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-950">Too many payment attempts. Please wait a few minutes.</p>}
+            {error === 'demo' && <p className="rounded-xl bg-violet-50 p-3 text-sm text-violet-950">This is a demo order used for training — it can’t be paid. Staff can use “Simulate payment” on the attendant screen.</p>}
             <a href={`/pay/${token}`} className={buttonClasses({ size: 'lg', block: true })}>
               Pay now · {formatCedis(order.total_pesewas)}
             </a>

@@ -11,8 +11,9 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { Toggle } from '@/components/ui/Toggle'
 import { useToast } from '@/components/ui/Toast'
 import type { StaffRole } from '@/lib/types'
+import { DemoBadge } from '@/components/staff/OrderCard'
 
-type Row = { user_id: string; display_name: string; role: StaffRole; is_active: boolean; created_at: string }
+type Row = { user_id: string; display_name: string; role: StaffRole; is_active: boolean; is_demo: boolean; created_at: string }
 const ROLES: { id: StaffRole; label: string; can: string }[] = [
   { id: 'attendant', label: 'Attendant', can: 'Accept/reject orders, phone orders, sold-out, dispatch' },
   { id: 'kitchen', label: 'Kitchen', can: 'Kitchen display, sold-out' },
@@ -85,7 +86,10 @@ export function StaffAdmin() {
             return (
               <li key={r.user_id} className="flex flex-wrap items-center gap-3 p-4">
                 <div className="min-w-40 flex-1">
-                  <p className="font-semibold">{r.display_name}</p>
+                  <p className="font-semibold">
+                    {r.display_name}
+                    {r.is_demo && <DemoBadge className="ml-2 align-middle" />}
+                  </p>
                   <p className="text-xs text-muted">{ROLES.find((x) => x.id === r.role)?.can}</p>
                 </div>
                 <Select aria-label={`Role for ${r.display_name}`} value={r.role} disabled={locked} onChange={(e) => patch({ userId: r.user_id, role: e.target.value })} className="w-48">

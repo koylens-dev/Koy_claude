@@ -12,7 +12,7 @@ Nothing in the brief blocked the build, so there are no open questions. Two plac
 |---|---|---|
 | Brand colours | **Taken from your logo files:** midnight green `#0c1c14`, gold `#ffd35b`, forest green `#1b4e22`, olive `#315d04`, chili red `#ff0000`, stem green `#1d7442`; page background `#fdf6e3` (a softer version of the logo cream for long reading). Every text/background pair passes WCAG AA. Charts use the stem green, because the forest green is too dark for chart bars. | Top of `src/app/globals.css` |
 | Logo | **Your logo**, cut out of its patterned background. Gold-on-midnight in the header, kitchen screen and share card; green-on-light in the footer, staff login and admin. The steaming bowl on midnight green is the app icon. | Replace the two files in `brand/source/` and run `npm run brand` |
-| Launch budget `[AMOUNT PER MONTH]` | Unknown. The recommended setup has a fixed cost of about **US$45 (≈ GH₵525) a month**. On top of that you pay per use for SMS and 1.95% per payment. See §2.3. | — |
+| Monthly budget | **GH₵1,500 a month** (confirmed 2 October). **It fits.** Running costs are about **GH₵650 a month** at launch volume, which leaves about GH₵850 of headroom. Paystack's 1.95% comes out of each payment, not out of this budget. See §2.4. | — |
 | Average order value | **GH₵120** (food plus delivery). It's used only for the cost table. | — |
 | Opening hours, delivery zones, prices | Sample values for Adenta and nearby areas (Madina, East Legon, Oyarifa, Spintex) | Admin → Hours & settings / Delivery zones / Menu |
 | Delivery fee model | **By zone** at launch (the customer picks an area). Fees based on distance come in Phase 2. | Admin → Delivery zones |
@@ -93,6 +93,49 @@ What this means:
 - **SMS is cheaper than WhatsApp for automated updates in Ghana.** WhatsApp utility templates cost about US$0.004–0.005 (≈ GH₵0.05) each. Since 1 October 2026, Meta also charges for service messages after 1,000 free per month. SMS costs GH₵0.022–0.031. Use SMS for automated order updates and free WhatsApp click-to-chat for human support (both are built in). Phase 2 can add WhatsApp notifications for customers who prefer them.
 - **Cheaper hosting option:** Cloudflare Workers ($5/month) via OpenNext instead of Vercel Pro saves about $15/month, but takes more setup. It's worth it later, not before launch.
 - **Don't** run production on Supabase's free plan. It pauses after a week of inactivity and has no backups.
+
+### 2.4 Your budget: GH₵1,500 a month
+
+**Verdict: it fits, with room to spare, up to about 250 orders a day.**
+
+What you pay each month at launch (~30 orders a day):
+
+| Item | How it's paid | GH₵ / month |
+|---|---|---|
+| Vercel Pro (hosting) | Dollar card, US$20 | ≈ 234 |
+| Supabase Pro (database, sign-in, backups) | Dollar card, US$25 (includes the small database server) | ≈ 293 |
+| Domain | Yearly, ≈ US$15–20 | ≈ 20 |
+| SMS (Arkesel, ~3,150 messages) | Prepaid credit in cedis | ≈ 100 |
+| Sentry (errors), UptimeRobot (uptime) | Free plans | 0 |
+| **Total** | | **≈ 650** |
+| **Headroom left from GH₵1,500** | | **≈ 850** |
+
+How this changes as you grow:
+
+| Orders a day | Platform + SMS per month | Within GH₵1,500? |
+|---|---|---|
+| 30 | ≈ GH₵650 | Yes |
+| 100 | ≈ GH₵850 | Yes |
+| 250 | ≈ GH₵1,350 | Yes, just |
+| 300+ | ≈ GH₵1,600 and up | No. By then sales are about GH₵1 million a month, so raise the budget. |
+
+Things to know:
+- **Paystack's 1.95% is not part of this budget.** Paystack deducts it from each payment before paying you, so it shows up as lower payouts, not as a bill. At 30 orders a day that's about GH₵2,100 a month (≈ GH₵2.34 on a GH₵120 order). If you meant the GH₵1,500 to cover Paystack fees too, it only stretches to about 12 orders a day. Price the menu with the 1.95% in mind instead.
+- **The cedi moves.** Vercel and Supabase bill in US dollars. Each 10% fall in the cedi adds about GH₵55 a month. Your bank may also add a 1–3% foreign-card fee. The headroom covers both comfortably.
+- **What the headroom is for:** more SMS as you grow, and the Phase 2 email receipts (≈ US$20 at 300 orders a day). A paid uptime plan or Supabase point-in-time recovery (≈ US$100) is not needed at this size.
+- **Possible saving later:** moving hosting to Cloudflare Workers saves about GH₵175 a month (§2.3). Not before launch.
+
+**Spending limits (set them on day one so no bill can surprise you):**
+
+| Service | Where | Setting |
+|---|---|---|
+| Vercel | Team → Settings → Billing → **Spend Management** | Turn it on with a budget of **US$40** and alerts at 50%, 75% and 100%. Leave "pause projects" **off**: pausing would take the shop offline at dinner time. The alert gives you time to react, and normal traffic stays inside the US$20 plan. |
+| Supabase | Organization → Billing → **Spend cap** | Keep it **on** (the default on Pro). Usage above the plan's quota is then blocked instead of billed. Don't add compute or point-in-time recovery add-ons without deciding to; the cap doesn't cover add-ons. |
+| Arkesel (SMS) | Top up credit | Prepaid, so you can never owe more than you topped up. Start with **GH₵150** and use the low-balance alert if your account offers one (otherwise check the balance weekly). If the credit runs out, SMS stops, but orders and payments carry on. |
+| Sentry | Free Developer plan | Hard limit, no card needed, never billed. |
+| Paystack | — | No monthly fee. Only the 1.95% per successful payment. |
+
+Check the Billing pages on the 1st of each month for the first three months (5 minutes).
 
 ---
 
@@ -353,15 +396,16 @@ Everything in the brief's Phase 1 is built, plus several items pulled forward be
   - **Sales dashboard**: by day/hour/payment method/zone/channel; AOV; top and slowest dishes; prep, accept and delivery times; cancellation and refund rates; repeat customers.
   - **CSV exports**: orders, items, payments (for reconciliation) and customers with consent.
   - Customer list with consent; catering inbox.
+  - **Demo & training data**: one click loads six weeks of realistic sample orders plus live orders on every staff screen, so the reports can be explored and staff can practise. Demo orders are clearly marked, never send SMS and never touch Paystack. One click removes them all before go-live.
 - **Operations**
   - A cron every 5 minutes: re-checks payments, expires unpaid orders, completes delivered orders, tracks refunds.
   - **An SMS to managers if a paid order waits more than 5 minutes unaccepted.**
   - Health endpoint for uptime monitoring; Sentry.
 
 **Tests:**
-- 85 database checks: state machine, payments, refunds, row-level security, reporting.
+- 113 database checks: state machine, payments, refunds, row-level security, reporting, demo data load/use/remove.
 - 58 unit tests: pricing, hours/slots, Ghana phone & GPS formats, webhook signatures, SMS length and cost, CSV safety, and the UI/database state-machine match.
-- 45 end-to-end checks against the real build: checkout → webhook → kitchen → refunds → phone order → exports → cron → OTP.
+- 75 end-to-end checks against the real build: checkout → webhook → kitchen → refunds → phone order → exports → cron → OTP → demo mode (load, simulate payment, practice refunds without Paystack, no SMS, exports stay clean, remove).
 
 ### 5.2 Is 12 October achievable?
 

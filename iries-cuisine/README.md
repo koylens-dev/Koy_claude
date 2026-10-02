@@ -35,6 +35,7 @@ A Progressive Web App for **Irie's Cuisine** (Adenta, Accra). It covers the whol
   - Menu, photos, extras, zones, hours, settings, staff and roles.
   - Order search with timelines and refunds; audit log.
   - Sales dashboard; CSV exports (orders, items, payments, customers with consent); catering inbox.
+  - **Demo & training data:** one click (owner) loads six weeks of sample orders, live orders on every staff screen and practice logins. Demo orders never send SMS, never touch Paystack and stay out of exports. One click removes them all.
 - **Operations**
   - A job every 5 minutes: payment re-checks, unpaid-order timeouts, auto-complete, refund tracking, and an SMS to managers about orders waiting to be accepted.
   - Health endpoint; Sentry.

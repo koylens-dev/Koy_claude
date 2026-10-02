@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import { PageTitle } from '@/components/admin/AdminShell'
+import { DemoDataCard } from '@/components/admin/DemoDataCard'
 import { Button } from '@/components/ui/Button'
 import { Field, Input, Select, Textarea } from '@/components/ui/Field'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -176,6 +177,8 @@ export function SettingsAdmin() {
           <Button variant="secondary" onClick={addClosed}>Add</Button>
         </div>
       </section>
+
+      <DemoDataCard />
     </div>
   )
 }

@@ -58,14 +58,16 @@ export async function POST(req: NextRequest) {
   }
 
   const links = { pay: payUrl(order.public_token), track: trackUrl(order.public_token) }
-  if (input.sendPaymentSms) {
+  if (input.demo) {
+    await admin.from('orders').update({ is_demo: true }).eq('id', order.id)
+  } else if (input.sendPaymentSms) {
     after(() =>
       sendOrderSms(order.id, 'payment_link', phone, smsTemplates.paymentLink(order.order_number, order.total_pesewas, links.pay)),
     )
   }
 
   return jsonOk({
-    order: { id: order.id, order_number: order.order_number, total_pesewas: order.total_pesewas, customer_phone: phone },
+    order: { id: order.id, order_number: order.order_number, total_pesewas: order.total_pesewas, customer_phone: phone, is_demo: input.demo },
     links,
     quote: publicQuote(quote),
   })

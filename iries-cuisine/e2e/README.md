@@ -6,7 +6,9 @@ stands in for Supabase Auth and Paystack. It walks an order through the whole li
 
 checkout quote → order + Paystack checkout → signed webhook (re-verified with "Paystack") →
 paid → attendant accepts → kitchen → manager partial refund → cancel with automatic refund →
-phone/WhatsApp order with pay link → CSV exports → cron → OTP SMS hook → catering → sales report.
+phone/WhatsApp order with pay link → CSV exports → cron → OTP SMS hook → catering → sales report →
+demo mode (owner loads it, practice logins, simulated payment, practice refunds that never call
+"Paystack", SMS logged as skipped, exports without demo rows, owner removes it).
 
 ```bash
 # one-off: download a PostgREST binary for your OS from
@@ -16,4 +18,4 @@ npm run test:e2e
 ```
 
 Run it before every release. It does **not** call the real Paystack, SMS provider or Supabase;
-use Paystack test mode on a staging deployment for that (see docs/SETUP_AND_DEPLOY.md, step 9).
+use Paystack test mode on a staging deployment for that (see docs/SETUP_AND_DEPLOY.md, step 10).

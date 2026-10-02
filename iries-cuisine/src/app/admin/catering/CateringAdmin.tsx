@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Phone } from 'lucide-react'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import { PageTitle } from '@/components/admin/AdminShell'
+import { DemoBadge } from '@/components/staff/OrderCard'
 import { Select } from '@/components/ui/Field'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { formatDateTime } from '@/lib/time'
@@ -22,6 +23,7 @@ type Enquiry = {
   menu_interest: string | null
   notes: string | null
   status: string
+  is_demo: boolean
   created_at: string
 }
 const STATUSES = ['new', 'contacted', 'quoted', 'won', 'lost']
@@ -60,7 +62,10 @@ export function CateringAdmin() {
             <li key={e.id} className="rounded-2xl bg-surface p-4 ring-1 ring-line">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="font-semibold">{e.name} · {e.event_type ?? 'Event'}{e.headcount ? ` · ${e.headcount} guests` : ''}</p>
+                  <p className="font-semibold">
+                    {e.name} · {e.event_type ?? 'Event'}{e.headcount ? ` · ${e.headcount} guests` : ''}
+                    {e.is_demo && <DemoBadge className="ml-2 align-middle" />}
+                  </p>
                   <p className="text-sm text-muted">
                     {e.event_date ? `Event ${e.event_date}` : 'Date not set'}{e.location && ` · ${e.location}`}{e.budget && ` · budget ${e.budget}`}
                   </p>
@@ -72,8 +77,15 @@ export function CateringAdmin() {
               {e.menu_interest && <p className="mt-2 text-sm"><strong>Menu:</strong> {e.menu_interest}</p>}
               {e.notes && <p className="mt-1 text-sm"><strong>Notes:</strong> {e.notes}</p>}
               <div className="mt-3 flex flex-wrap gap-2 text-sm">
-                <a href={`tel:${e.phone}`} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-3 font-semibold ring-1 ring-line"><Phone className="size-4" aria-hidden /> {formatGhanaPhone(e.phone)}</a>
-                <a href={whatsappLink(e.phone, `Hello ${e.name.split(' ')[0]}, thank you for your catering enquiry with Irie's Cuisine. `)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center rounded-xl bg-[#25D366] px-3 font-semibold text-white">WhatsApp</a>
+                {/* demo enquiries use made-up numbers that may belong to real people */}
+                {e.is_demo ? (
+                  <span className="inline-flex min-h-10 items-center gap-1 px-1 text-muted"><Phone className="size-4" aria-hidden /> {formatGhanaPhone(e.phone)} (demo, do not call)</span>
+                ) : (
+                  <>
+                    <a href={`tel:${e.phone}`} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-3 font-semibold ring-1 ring-line"><Phone className="size-4" aria-hidden /> {formatGhanaPhone(e.phone)}</a>
+                    <a href={whatsappLink(e.phone, `Hello ${e.name.split(' ')[0]}, thank you for your catering enquiry with Irie's Cuisine. `)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center rounded-xl bg-[#25D366] px-3 font-semibold text-white">WhatsApp</a>
+                  </>
+                )}
                 {e.email && <a href={`mailto:${e.email}`} className="inline-flex min-h-10 items-center rounded-xl px-3 font-semibold ring-1 ring-line">{e.email}</a>}
                 <span className="ml-auto self-center text-xs text-muted">{formatDateTime(e.created_at)}</span>
               </div>

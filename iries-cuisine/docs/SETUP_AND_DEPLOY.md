@@ -126,12 +126,23 @@ Sign in at `/staff/login` → **Admin**:
 3. **Extras & spice:** spice levels, extra protein, sides and their prices.
 4. **Menu:** edit or hide the sample dishes; add yours with photos. Take photos in landscape, in daylight; the app shrinks them automatically. New dishes start **hidden** until you switch "On menu" on.
 5. **Staff:** create a login for every attendant, cook, rider and manager. Every action is recorded against the person who did it, so **never share logins**.
+6. **Demo data (optional, recommended for training).** Do this after the menu and zones are in place, because demo orders use your dishes and prices.
+   - Signed in as the **owner**: Hours & settings → scroll to **Demo & training data** → **Load demo data**. It takes about 10 seconds.
+   - You get about 1,000 sample orders over the last six weeks (so **Sales** has something to show), ten live orders on the Orders and Kitchen screens, five catering enquiries, and **four practice logins** (attendant, kitchen, dispatcher, manager). The logins are shown **once**, so copy them straight away.
+   - Demo orders carry a pink **DEMO** badge. They **never send SMS**, **can't be paid through Paystack** (staff use *Simulate payment* instead), refund without touching Paystack, and are left out of the CSV exports. The demo phone numbers are made up, so the app hides the Call and WhatsApp buttons on them.
+   - Staff can also create their own **practice orders**: New order → tick *Practice order*.
+   - **Remove it before go-live:** the same card → **Remove all demo data**. Every DEMO order, the demo enquiries and the practice logins are deleted. Real orders, customers, menu and settings are not touched. If no real orders exist yet, order numbers restart at #1001.
 
 ## 9. Monitoring (15 minutes, do it before launch)
 
 - **Uptime:** at [uptimerobot.com](https://uptimerobot.com), add an HTTP monitor for `https://order.iriescuisine.com/api/health` every 5 minutes, with alerts to two phones/emails.
 - **Errors:** at [sentry.io](https://sentry.io), create a Next.js project, copy the DSN into `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_DSN` in Vercel, and redeploy.
 - **Backups:** Supabase Pro makes daily backups automatically (kept 7 days). Check Database → Backups once.
+- **Spending limits** (so the monthly bill stays inside your GH₵1,500 budget):
+  - **Vercel:** Team → Settings → Billing → Spend Management: budget US$40, alerts on, "pause projects" off.
+  - **Supabase:** Organization → Billing: keep **Spend cap** on.
+  - **Arkesel:** prepaid. Keep GH₵100–150 of credit and check it weekly.
+  - Full reasoning: [technical plan §2.4](./TECHNICAL_PLAN.md#24-your-budget-gh1500-a-month).
 
 ## 10. Test everything in test mode (Paystack test keys)
 
@@ -161,7 +172,8 @@ Use **real phones**, one Android and one iPhone, on mobile data.
 3. Set the **Live Webhook URL** in Paystack to the same `…/api/webhooks/paystack`.
 4. Redeploy in Vercel.
 5. Place a real small order with your own MoMo, accept it, then refund it from Admin. You should see the money leave and come back.
-6. Clear the test orders: SQL Editor → paste and run [`supabase/reset_test_orders.sql`](../supabase/reset_test_orders.sql). Order numbers restart at #1001. **Only do this before the first real customer order**, because it removes all orders and payments.
+6. If you loaded demo data, remove it now (Admin → Hours & settings → **Remove all demo data**).
+7. Clear the test orders: SQL Editor → paste and run [`supabase/reset_test_orders.sql`](../supabase/reset_test_orders.sql). Order numbers restart at #1001. **Only do this before the first real customer order**, because it removes all orders and payments.
 
 ## 12. Everyday changes you can make yourself
 

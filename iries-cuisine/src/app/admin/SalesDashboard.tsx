@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { AlertTriangle, Download } from 'lucide-react'
+import { AlertTriangle, Download, FlaskConical } from 'lucide-react'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import { BarList, ColumnChart, StatTile } from '@/components/admin/charts'
 import { PageTitle } from '@/components/admin/AdminShell'
@@ -74,7 +74,7 @@ export function SalesDashboard() {
   const [data, setData] = useState<Summary | null>(null)
   const [loadedKey, setLoadedKey] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [alerts, setAlerts] = useState<{ failedRefunds: number; mismatches: number }>({ failedRefunds: 0, mismatches: 0 })
+  const [alerts, setAlerts] = useState<{ failedRefunds: number; mismatches: number; demoOrders: number }>({ failedRefunds: 0, mismatches: 0, demoOrders: 0 })
 
   const key = `${range.from}|${range.to}`
   const loading = loadedKey !== key
@@ -99,7 +99,8 @@ export function SalesDashboard() {
     Promise.all([
       supabase.from('refunds').select('id', { count: 'exact', head: true }).eq('status', 'failed'),
       supabase.from('payments').select('id', { count: 'exact', head: true }).eq('status', 'amount_mismatch'),
-    ]).then(([r, p]) => setAlerts({ failedRefunds: r.count ?? 0, mismatches: p.count ?? 0 }))
+      supabase.from('orders').select('id', { count: 'exact', head: true }).eq('is_demo', true),
+    ]).then(([r, p, d]) => setAlerts({ failedRefunds: r.count ?? 0, mismatches: p.count ?? 0, demoOrders: d.count ?? 0 }))
   }, [])
 
   const t = data?.totals
@@ -122,6 +123,16 @@ export function SalesDashboard() {
         <Link href="/admin/orders?filter=attention" className="mb-4 flex items-center gap-2 rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-900 ring-1 ring-red-200">
           <AlertTriangle className="size-5" aria-hidden />
           Needs attention: {alerts.failedRefunds} failed refund(s), {alerts.mismatches} payment amount mismatch(es).
+        </Link>
+      )}
+
+      {alerts.demoOrders > 0 && (
+        <Link href="/admin/settings#demo-heading" className="mb-4 flex items-center gap-2 rounded-2xl bg-fuchsia-50 p-4 text-sm text-fuchsia-950 ring-1 ring-fuchsia-200">
+          <FlaskConical className="size-5 shrink-0" aria-hidden />
+          <span>
+            <strong>Demo data:</strong> these figures include {alerts.demoOrders.toLocaleString('en-GH')} sample orders. Remove them in
+            Hours &amp; settings before go-live.
+          </span>
         </Link>
       )}
 

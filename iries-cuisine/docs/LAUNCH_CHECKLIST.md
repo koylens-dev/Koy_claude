@@ -10,16 +10,19 @@ The code is done and tested. What's left is accounts, approvals, content, device
 | Fri 2 Oct | Create the Arkesel account, buy credit, **register the sender ID** | Owner | Has a fallback (default sender ID) |
 | Fri 2 Oct | Buy the domain. Create the Supabase (Pro, London) and Vercel (Pro) accounts with the dollar card. | Owner / tech | Yes |
 | Fri 2 Oct | Steps 3, 5, 6 and 7 of the setup guide (database, deploy, domain, OTP hook, owner login) | Tech | Yes |
+| Fri 2 Oct | **Set spending limits** (Vercel Spend Management US$40 with alerts, Supabase spend cap on, Arkesel prepaid GH₵150). Budget check: [technical plan §2.4](./TECHNICAL_PLAN.md#24-your-budget-gh1500-a-month) | Owner | Peace of mind |
 | Sat 3 – Sun 4 | **Menu content:** final dishes, portions, prices, spice/extras, descriptions. Photograph the dishes in daylight. | Owner + chef | Photos have a fallback (placeholders) |
 | Sat 3 – Sun 4 | Real delivery zones, fees, minimum orders and ride times; opening hours; public holidays | Owner | Yes |
 | Mon 5 | Buy or prepare devices: kitchen tablet (10", Android), attendant phone or tablet, chargers, data bundle as Wi-Fi backup, optional 80 mm thermal printer | Owner | Kitchen tablet: yes |
 | Mon 5 | Create staff logins (Admin → Staff), one per person | Manager | Yes |
+| Mon 5 | **Load demo data** (Admin → Hours & settings → *Load demo data*). Explore the Sales reports; staff can practise on the DEMO orders from now until Sat 10. | Owner | Recommended |
 | Mon 5 – Tue 6 | **Test mode run-through** on real phones: the whole checklist in setup guide §10 | Tech + manager | Yes |
 | Tue 6 | Send the privacy policy and terms to a lawyer. **Register with the Data Protection Commission** as a data controller. | Owner | Legal |
-| Wed 7 | Staff training session 1 (30 min): attendant console, alarm, accept/reject, phone orders, sold out, kitchen display | Manager | Yes |
+| Wed 7 | Staff training session 1 (30 min) **on the demo orders**: attendant console, alarm, accept/reject, practice phone order + *Simulate payment*, sold out, kitchen display | Manager | Yes |
 | **Wed 7 – Thu 8** | Paystack activated → **switch to live keys** (§11) → real small order + refund | Tech | **Yes** |
 | Thu 8 – Sat 10 | **Soft launch:** invite 20–50 friends and family to order for real. Watch the dashboard, timings and SMS. Fix anything awkward. | Everyone | Strongly recommended |
-| Sat 10 | Staff training session 2: rush-hour drill (5 orders at once), offline drill (switch Wi-Fi off), refund drill | Manager | Yes |
+| Sat 10 | Staff training session 2: rush-hour drill (5 practice orders at once), offline drill (switch Wi-Fi off), refund drill on DEMO orders | Manager | Yes |
+| Sat 10 (evening) | **Remove demo data** (Admin → Hours & settings → *Remove all demo data*). Do it before soft-launch orders pile up in your reports. | Owner | **Yes** |
 | Sun 11 | Run the reset script ([`supabase/reset_test_orders.sql`](../supabase/reset_test_orders.sql)) **only if you want to clear soft-launch test orders**. Final checks (below). Prepare launch posts with dish links (`/menu/<dish>`). | Owner / tech | — |
 | **Mon 12 Oct** | 🎉 Go live: share the link on Instagram/WhatsApp status, pin the WhatsApp catalogue link, staff on shift 30 minutes early | Everyone | — |
 
@@ -27,6 +30,8 @@ The code is done and tested. What's left is accounts, approvals, content, device
 
 ## Go-live morning checklist
 
+- [ ] **Demo data removed:** Admin → Hours & settings shows *Load demo data* (not *Remove*), the Sales page has no pink "Demo data" banner, and no order shows a DEMO badge
+- [ ] Spending limits set (Vercel, Supabase, Arkesel prepaid credit topped up)
 - [ ] Paystack shows **Live** mode; `PAYSTACK_SECRET_KEY` starts with `sk_live_`; the live webhook URL is set
 - [ ] A live test order (your own MoMo) reached the kitchen; it was refunded successfully
 - [ ] OTP SMS arrives within ~30 seconds on MTN, Telecel and AT numbers

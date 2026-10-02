@@ -25,6 +25,7 @@ export default async function TicketPage({ params }: PageProps<'/staff/ticket/[i
     <main className="print-ticket mx-auto w-[76mm] bg-white p-2 font-mono text-[12px] leading-snug text-black">
       <AutoPrint />
       <p className="text-center text-[11px]">IRIE&apos;S CUISINE</p>
+      {o.is_demo && <p className="my-1 border-2 border-black text-center text-[14px] font-bold">PRACTICE: DO NOT COOK</p>}
       <p className="text-center text-[28px] font-bold leading-none">#{o.order_number}</p>
       <p className="mt-1 text-center text-[14px] font-bold uppercase">{o.fulfilment === 'delivery' ? `Delivery · ${o.zone_name ?? ''}` : 'Pickup'}</p>
       {o.scheduled_for && <p className="text-center font-bold">SCHEDULED {formatSlot(o.scheduled_for).toUpperCase()}</p>}
